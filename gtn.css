@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 100px;
+    background-color: lightBlue;
+}
+
+h1 {
+    font-size: 50px;
+}
+
+#player1Info, #player2Info {
+    display: inline-block;
+    vertical-align: top;
+    padding: 50px;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 10px;
+    text-align: center;
+}
+
+#player1Info {
+    float: left;
+    text-align: center;
+}
+
+#player2Info {
+    float: right;
+    text-align: center;
+}
+
+#player1Photo, #player2Photo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+#player1Name, #player2Name {
+    font-weight: bold;
+}

@@ -1,0 +1,57 @@
+html body {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  background-color: #6EC5F7;
+}
+
+/*Navigation bar*/
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #416CC0;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.sidenav a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+  text-align: center;
+  border-top: 1px solid black;
+  transition: 0.3s;
+  background-color: #416CC0;
+}
+
+.sidenav a:hover {
+  background-color: #ede8e8;
+}
+
+.active,
+.dot:hover {
+  background-color: #717171;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 36px;
+  margin-left: 50px;
+  border: 2px solid black;
+}
+
+#main {
+  transition: margin-left .5s;
+}
+
+canvas {
+  margin-left: 14%;
+}

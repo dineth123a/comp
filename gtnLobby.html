@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>GTN Lobby</title>
+  <link href="gtnLobby.css" rel="stylesheet" type="text/css" />
+
+  <!-- firebase start ****************************************-->
+  <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+  <!-- firebase end ******************************************-->
+  <script src="../fb/fb_setup.js"></script>
+  <script src="../fb/fb_io.js"></script>
+  <script defer src="gtnLobby.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div id="main">
+    <!--Navbar-->
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="../html/gameMenu.html">Home</a>
+      <a href="../html/RocketRush.html">Rocket Rush</a>
+      <a href="../html/GeoDash.html">GeoDash</a>
+      <a href="../html/leaderboard.html">Leaderboard</a>
+      <a href="../ad_manager/ad_manager.html">Admin</a>
+      <a href="gtnLobby.html">GTN Lobby</a>
+
+  </div>
+
+    <!--Open and close navbar-->
+
+  <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
+  <script>
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        // User is signed in
+        const userId = user.uid;
+        const userRef = firebase.database().ref('userDetails/' + userId);
+
+        userRef.once('value').then((snapshot) => {
+          if (snapshot.exists()) {
+            // User is registered, allow access
+            console.log('User is registered:', snapshot.val());
+          } else {
+            // User is not registered, redirect to registration page
+            window.location.href = '../html/registration.html';
+          }
+        });
+      }
+    });
+
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+    }
+  </script>
+
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>wins</th>
+          <th>losses</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id='tb_gtnLobby'>
+      </tbody>
+    </table>
+    <button onclick="createLobbyRecord()">CREATE</button>
+    <p id="statusMessage"></p>
+</body>
+</html>
