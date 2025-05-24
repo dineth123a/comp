@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Guess The Number</title>
   <link href="/gtn/gtn.css" rel="stylesheet" type="text/css" />
+
 
   <!-- firebase start ****************************************-->
   <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
@@ -23,23 +25,38 @@
 <body>
     <h1>Guess The Number</h1>
 
+
+    <div id="gameStatus"></div>
+    <div id="hintMessage"></div>
     <div id="gameContainer"></div>
-        <div id="leaderboardContainer"></div>
-    <button onclick="showLeaderboard()">Show Leaderboard</button>
-    <input type="number" id="guessInput">
-    <button onclick="submitGuess(document.getElementById('guessInput').value)">Submit Guess</button>
+    <div id="leaderboardContainer"></div>
+
+
+    <div class="guess-section">
+      <input type="number" id="guessInput" placeholder="Enter your guess (1-100)">
+      <button onclick="submitGuess(document.getElementById('guessInput').value)" id="submitGuessBtn">Submit Guess</button>
+    </div>
+
+
+    <div id="playerInfoContainer">
     <div id="player1Info">
+      <h3>Player 1</h3>
       <img id="player1Photo" src="" alt="Player 1 Photo">
       <p id="player1Name"></p>
       <p id="player1Wins"></p>
       <p id="player1Losses"></p>
+      <p id="player1SecretNumberDisplay"></p>
     </div>
     <div id="player2Info">
+      <h3>Player 2</h3>
       <img id="player2Photo" src="" alt="Player 2 Photo">
       <p id="player2Name"></p>
       <p id="player2Wins"></p>
       <p id="player2Losses"></p>
+      <p id="player2SecretNumberDisplay"></p>
     </div>
-
+  </div>
+<button onclick="location.href='/gtnLobby/gtnLobby.html'">Return to Lobby</button>
 </body>
 </html>
+
