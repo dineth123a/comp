@@ -1,10 +1,16 @@
-input {
+input:not([type="radio"]) {
   width: 50%;
   padding: 12px;
   margin: 10px;
   box-sizing: border-box;
   margin-left: 30%;
   margin-top: 1%;
+}
+
+input[type="radio"] {
+  margin-left: 28%;
+  margin-right: 5px;
+  width: auto;
 }
 
 input[type=button],
@@ -27,4 +33,8 @@ input[type=reset] {
 
 form {
   margin-top: 10%;
+}
+
+.questions {
+  text-align: left;
 }

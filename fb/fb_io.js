@@ -62,6 +62,14 @@ function fb_checkRegistration(snapshot, user) {
     sessionStorage.setItem("photo", userInfo.photo || user.photoURL || "");
     sessionStorage.setItem("gameName", userInfo.gameName || "");
     sessionStorage.setItem("age", userInfo.age || "");
+    sessionStorage.setItem("phoneNumber", userInfo.phoneNumber || "");
+    sessionStorage.setItem("gender", userInfo.gender || "");
+    sessionStorage.setItem("addressNumber", userInfo.addressNumber || "");
+    sessionStorage.setItem("street", userInfo.street || "");
+    sessionStorage.setItem("suburb", userInfo.suburb || "");
+    sessionStorage.setItem("city", userInfo.city || "");
+    sessionStorage.setItem("country", userInfo.country || "");
+
     console.log("session storage updated with user info:", userInfo);
     console.log("being redirected to game menu page.")
     window.location = "/html/gameMenu.html";
@@ -115,12 +123,38 @@ function fb_register() {
  */
 function fb_userInfo(user) {
   console.log("fb_userInfo called with user:", user);
+
+  const userName = document.getElementById("HTML_name").value;
+  const userAge = document.getElementById("HTML_age").value;
+  const phoneNumber = document.getElementById("HTML_phoneNumber").value;
+  const addressNumber = document.getElementById("HTML_addressNumber").value;
+  const street = document.getElementById("HTML_street").value;
+  const suburb = document.getElementById("HTML_suburb").value;
+  const city = document.getElementById("HTML_city").value;
+  const country = document.getElementById("HTML_country").value;
+
+  let gender;
+  const genderRatios = document.getElementsByName('gender');
+  for (let i = 0; i < genderRatios.length; i++) {
+    if (genderRatios[i].checked) {
+      gender = genderRatios[i].value;
+      break;
+    }
+  }
+
   var data = {
-    gameName: HTML_name.value,
+    gameName: userName,
     displayName: user.displayName,
     email: user.email,
     photo: user.photoURL,
-    age: HTML_age.value,
+    age: userAge,
+    phoneNumber: phoneNumber,
+    gender: gender,
+    addressNumber: addressNumber,
+    street: street,
+    suburb: suburb,
+    city: city,
+    country: country
   }
     sessionStorage.setItem("gameName", HTML_name.value)
     sessionStorage.setItem("displayName", user.displayName)
@@ -128,14 +162,21 @@ function fb_userInfo(user) {
     sessionStorage.setItem("photo", user.photoURL)
     sessionStorage.setItem("age", HTML_age.value)
     sessionStorage.setItem("uid", user.uid)
+    sessionStorage.setItem("phoneNumber", phoneNumber);
+    sessionStorage.setItem("gender", gender);
+    sessionStorage.setItem("addressNumber", addressNumber);
+    sessionStorage.setItem("street", street);
+    sessionStorage.setItem("suburb", suburb);
+    sessionStorage.setItem("city", city);
+    sessionStorage.setItem("country", country);
 
   console.log(user.uid)
   console.log(data)
-  firebase.database().ref('/rocketRush/' + HTML_name.value).set({
+  firebase.database().ref('/rocketRush/' + userName).set({
     uid: user.uid,
     score: 0
   });
-  firebase.database().ref('/geoDash/' + HTML_name.value).set({
+  firebase.database().ref('/geoDash/' + userName).set({
     uid: user.uid,
     score: 0
   })

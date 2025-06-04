@@ -18,16 +18,44 @@
   <script src="../fb/fb_setup.js"></script>
   <script src="../fb/fb_io.js"></script>
   <script src="../registration.js"></script>
-
 </head>
 
 <body>
 
   <form id="registrationForm">
-    <label for="HTML_name" class="questions">What is your name?</label><br>
-    <input type="text" id="HTML_name" name="name" required><br>
-    <label for="HTML_age" class="questions">What is your age?</label><br>
-    <input type="text" id="HTML_age" name="age" required><br>
+    <label for="HTML_name" class="questions">Name:</label><br>
+    <input type="text" id="HTML_name" placeholder="e.g. Bob" name="name" required><br>
+
+    <label for="HTML_age" class="questions">Age:</label><br>
+    <input type="number" id="HTML_age" placeholder="e.g. 18" name="age" required><br>
+
+    <label for="HTML_phoneNumber" class="questions">Phone number:</label><br>
+    <input type="number" id="HTML_phoneNumber" placeholder="e.g. 027 906 4218" name="phone number" required><br>
+
+    <label for="HTML_addressNumber" class="questions">Address Number:</label><br>
+    <input type="text" id="HTML_addressNumber" placeholder="e.g. 42" name="address number" required><br>
+
+    <label for="HTML_suburb" class="questions">Suburb:</label><br>
+    <input type="text" id="HTML_suburb" placeholder="e.g. Petone" name="suburb" required><br>
+
+    <label for="HTML_street" class="questions">Street:</label><br>
+    <input type="text" id="HTML_street" placeholder="e.g. Jackson Street" name="street" required><br>
+
+    <label for="HTML_city" class="questions">City:</label><br>
+    <input type="text" id="HTML_city" placeholder="e.g. Lower Hutt" name="city" required><br>
+
+    <label for="HTML_country" class="questions">Country:</label><br>
+    <input type="text" id="HTML_country" placeholder="e.g. New Zealand" name="country" required><br>
+    
+    <div class="questions">
+    <label for="genderQuestion">Gender:</label><br>
+    <input type="radio" id="genderMale" name="gender" value="male" required>
+    <label for="genderMale">Male</label><br>
+    <input type="radio" id="genderFemale" name="gender" value="female">
+    <label for="genderFemale">Female</label><br>
+    <input type="radio" id="genderOther" name="gender" value="other">
+    <label for="genderOther">Other</label><br>
+    </div>
     <input type="submit" value="submit"><br><br>
   </form>
 
