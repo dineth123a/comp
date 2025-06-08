@@ -54,23 +54,20 @@ html body {
 
 .image-container {
   display: flex;
-  justify-content: space-around;
-  position: relative;
+  flex: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
 }
 
 .image-box {
   text-align: center;
+  flex: 1 1 300px;
   max-width: 45%;
+  min-width: 250px;
 }
 
-.RocketRush-image {
-  width: 100%;
-  height: auto;
-  border: 2px solid #416CC0;
-  border-radius: 10px;
-}
-
-.GeoDash-image {
+.image-box img {
   width: 100%;
   height: auto;
   border: 2px solid #416CC0;
@@ -80,6 +77,7 @@ html body {
 .image-description {
   font-size: 16px;
   color: #333;
+  margin-top: 10px;
 }
 
 /*footer*/

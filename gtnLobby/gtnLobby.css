@@ -95,3 +95,33 @@ html body {
   .flex-container {
     text-align: center;
   }
+
+  .lobby-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  .lobby-left {
+    width: 50%;
+  }
+
+  .lobby-right {
+    width: 45%;
+    text-align: center;
+  }
+
+  .gtn-image {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #333;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .gtn-description {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+  }
