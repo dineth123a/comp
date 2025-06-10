@@ -68,7 +68,6 @@ function fb_checkRegistration(snapshot, user) {
     sessionStorage.setItem("street", userInfo.street || "");
     sessionStorage.setItem("suburb", userInfo.suburb || "");
     sessionStorage.setItem("city", userInfo.city || "");
-    sessionStorage.setItem("country", userInfo.country || "");
 
     console.log("session storage updated with user info:", userInfo);
     console.log("being redirected to game menu page.")
@@ -127,11 +126,10 @@ function fb_userInfo(user) {
   const userName = document.getElementById("HTML_name").value;
   const userAge = document.getElementById("HTML_age").value;
   const phoneNumber = document.getElementById("HTML_phoneNumber").value;
-  const addressNumber = document.getElementById("HTML_addressNumber").value;
   const street = document.getElementById("HTML_street").value;
   const suburb = document.getElementById("HTML_suburb").value;
   const city = document.getElementById("HTML_city").value;
-  const country = document.getElementById("HTML_country").value;
+  const postcode = document.getElementById("HTML_postcode").value;
 
   let gender;
   const genderRatios = document.getElementsByName('gender');
@@ -150,11 +148,10 @@ function fb_userInfo(user) {
     age: userAge,
     phoneNumber: phoneNumber,
     gender: gender,
-    addressNumber: addressNumber,
     street: street,
     suburb: suburb,
     city: city,
-    country: country
+    postcode: postcode,
   }
     sessionStorage.setItem("gameName", HTML_name.value)
     sessionStorage.setItem("displayName", user.displayName)
@@ -164,11 +161,10 @@ function fb_userInfo(user) {
     sessionStorage.setItem("uid", user.uid)
     sessionStorage.setItem("phoneNumber", phoneNumber);
     sessionStorage.setItem("gender", gender);
-    sessionStorage.setItem("addressNumber", addressNumber);
     sessionStorage.setItem("street", street);
     sessionStorage.setItem("suburb", suburb);
     sessionStorage.setItem("city", city);
-    sessionStorage.setItem("country", country);
+    sessionStorage.setItem("postcode", postcode);
 
   console.log(user.uid)
   console.log(data)

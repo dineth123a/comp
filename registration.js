@@ -17,21 +17,19 @@ document.addEventListener("DOMContentLoaded", function() {
     var userName = document.getElementById("HTML_name").value.trim();
     var userAge = document.getElementById("HTML_age").value.trim();
     var phoneNumber = document.getElementById("HTML_phoneNumber").value.trim();
-    var addressNumber = document.getElementById("HTML_addressNumber").value.trim();
     var street = document.getElementById("HTML_street").value.trim();
     var suburb = document.getElementById("HTML_suburb").value.trim();
     var city = document.getElementById("HTML_city").value.trim();
-    var country = document.getElementById("HTML_country").value.trim();
+    var postcode = document.getElementById("HTML_postcode").value.trim();
 
     console.log("Name:", userName);
     console.log("Age:", userAge);
     console.log("Phone Number:", phoneNumber);;
     console.log("Gender", gender);
-    console.log("Address Number:", addressNumber);
     console.log("Street:", street);
     console.log("Suburb:", suburb);
     console.log("City:", city);
-    console.log("Country:", country);
+    console.log("Postcode:", postcode);
 
     if (/\d/.test(userName) || userName === "") {
       alert("Please enter a valid name that does not contain numbers or is blank");
@@ -48,12 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (phoneNumber === "") {
       alert("Please enter a valid phone number (digits only and not blank).");
       console.log("phone number validation failed");
-      return false;
-    }
-
-    if (addressNumber === "") {
-      alert("Please enter a valid address number (cannot be blank).");
-      console.log("address number validation failed");
       return false;
     }
 
@@ -75,9 +67,9 @@ document.addEventListener("DOMContentLoaded", function() {
       return false;
     }
 
-    if (country === "") {
-      alert("Please enter a valid country (cannot be blank).");
-      console.log("country validation failed");
+        if (postcode === "") {
+      alert("Please enter a valid postcode (cannot be blank).");
+      console.log("postcode validation failed");
       return false;
     }
 
