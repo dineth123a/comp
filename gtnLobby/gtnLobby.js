@@ -123,8 +123,6 @@ lobbyRef.once('value')
     .catch(error => {
         console.error("Error fetching lobby data:", error);
     })
-
-
 }
 /*-------------------------------------------------*/
 // END OF CODE

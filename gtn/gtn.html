@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Guess The Number</title>
   <link href="/gtn/gtn.css" rel="stylesheet" type="text/css" />
-
 
   <!-- firebase start ****************************************-->
   <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
@@ -25,18 +23,15 @@
 <body>
     <h1>Guess The Number</h1>
 
-
     <div id="gameStatus"></div>
     <div id="hintMessage"></div>
     <div id="gameContainer"></div>
     <div id="leaderboardContainer"></div>
 
-
     <div class="guess-section">
       <input type="number" id="guessInput" placeholder="Enter your guess (1-100)">
       <button onclick="submitGuess(document.getElementById('guessInput').value)" id="submitGuessBtn">Submit Guess</button>
     </div>
-
 
     <div id="playerInfoContainer">
     <div id="player1Info">

@@ -1,5 +1,4 @@
 console.log('%c fb_io.js \n-----------', 'color: blue; background-color: white;');
-
 /**
  * When the "Login/Signup" button is clicked, index.html calls fb_login()
  * Attempts to log in the user using Firebase Authentication.
@@ -122,7 +121,6 @@ function fb_register() {
  */
 function fb_userInfo(user) {
   console.log("fb_userInfo called with user:", user);
-
   const userName = document.getElementById("HTML_name").value;
   const userAge = document.getElementById("HTML_age").value;
   const phoneNumber = document.getElementById("HTML_phoneNumber").value;

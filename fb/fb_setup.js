@@ -1,8 +1,5 @@
-console.log('%c fb_setup.js \n-----------',
-  'color: blue; background-color: white;');
-
+console.log('%c fb_setup.js \n-----------', 'color: blue; background-color: white;');
 var database;
-
 /**************************************************************/
 // fb_initialise()
 // Initialize firebase, connect to the Firebase project.
@@ -31,4 +28,5 @@ const firebaseConfig = {
   // As soon as you have the script working, delete this log.
   console.log(firebase);
 }
+
 fb_initialise();

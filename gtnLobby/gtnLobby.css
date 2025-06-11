@@ -116,7 +116,6 @@ html body {
     height: auto;
     border: 2px solid #333;
     border-radius: 8px;
-    margin-bottom: 15px;
   }
 
   .gtn-description {
@@ -124,4 +123,5 @@ html body {
     padding: 15px;
     border-radius: 8px;
     text-align: left;
+    margin-bottom: 15px;
   }

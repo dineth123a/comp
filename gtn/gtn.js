@@ -4,13 +4,11 @@ const lobbyRef = firebase.database().ref('lobbies/' + lobbyId);
 let myPlayerNumber = 0;
 let isMyTurn = false;
 
-
 //Waits for the HTML content to fully load before calling the functions displayPlayerInfo() and setupGameListener()
 document.addEventListener('DOMContentLoaded', () => {
     displayPlayerInfo();
     setupGameListener();
 });
-
 
 /**
  * Loads and displays player info (names, photos, wins, losses) from the database.
@@ -21,14 +19,12 @@ function displayPlayerInfo() {
     lobbyRef.on('value', (snapshot) => {
         const lobbyData = snapshot.val();
 
-
         //Checks if lobby data exists. If not, redirects to lobby page
         if (!lobbyData) {
             console.error("Lobby data not found or null. Redirecting to lobby list");
             window.location.href="/gtnLobby/gtnLobby.html";
             return;
         }
-
 
             if (currentUserUid === lobbyData.p1Uid) {
                 myPlayerNumber = 1;
@@ -40,7 +36,6 @@ function displayPlayerInfo() {
                 return;
             }
 
-
             //Player 1 Info
             document.getElementById('player1Info').innerHTML = `
                 <h3>Player 1 (${lobbyData.p1Name || "Player 1"})</h3>
@@ -49,7 +44,6 @@ function displayPlayerInfo() {
                 <p>Losses: ${lobbyData.p1Losses || 0}</p>
                 <p id="player1SecretNumberDisplay"</p>
             `;
-
 
             //Player 2 Info
             document.getElementById('player2Info').innerHTML = `
@@ -60,7 +54,6 @@ function displayPlayerInfo() {
                 <p id="player2SecretNumberDisplay"></p>
             `;
 
-
             if (myPlayerNumber === 1 && lobbyData.p1SecretNumber) {
                 document.getElementById('player1SecretNumberDisplay').innerText = `Your secret number: ${lobbyData.p1SecretNumber}`;
             } else if (myPlayerNumber === 2 && lobbyData.p2SecretNumber) {
@@ -68,7 +61,6 @@ function displayPlayerInfo() {
             }
     });
 }
-
 
 /**
  * Sets up a real-time listener on the lobby to track game progress.
@@ -85,10 +77,8 @@ function setupGameListener() {
             return;
         }
 
-
         if (lobbyData.status === 'ready' &&
             (!lobbyData.p1SecretNumber || !lobbyData.p2SecretNumber)) {
-
 
             if (myPlayerNumber === 1 && (!lobbyData.p1SecretNumber || !lobbyData.p2SecretNumber)) {
                 const updates = {};
@@ -102,21 +92,17 @@ function setupGameListener() {
                     updates.currentPlayerTurn = Math.random() < 0.5 ? lobbyData.p1Uid : lobbyData.p2Uid;
                 }
 
-
                 lobbyRef.update(updates).catch(error => console.error("Init error:", error));
             }
         }
-
 
         if (lobbyData.status === 'gameOver') {
             document.getElementById('submitGuessBtn').disabled = true;
             document.getElementById('guessInput').disabled = true;
 
-
             const winnerId = lobbyData.winnerUid;
             const loserId = lobbyData.loserUid;
             let gameStatusMessage = '';
-
 
             if (winnerId === currentUserUid) {
                 gameStatusMessage = 'You Won!';
@@ -130,16 +116,13 @@ function setupGameListener() {
             return;
         }
 
-
         isMyTurn = (lobbyData.currentPlayerTurn === currentUserUid);
         document.getElementById('submitGuessBtn').disabled = !isMyTurn;
         document.getElementById('guessInput').disabled = !isMyTurn;
 
-
         updateGameDisplay(lobbyData);
     });
 }
-
 
 /**
  * Updates the user interface to show:
@@ -150,15 +133,12 @@ function updateGameDisplay(lobbyData) {
     const gameStatusElement = document.getElementById('gameStatus');
     const hintMessageElement = document.getElementById('hintMessage');
 
-
     const currentPlayerName = (lobbyData.currentPlayerTurn === lobbyData.p1Uid) ? lobbyData.p1Name : lobbyData.p2Name;
     gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
-
 
     if (isMyTurn) {
         gameStatusElement.innerText += " (Your turn)";
     }
-
 
     if (lobbyData.lastGuessedBy && lobbyData.lastGuess && lobbyData.lastHint) {
         const guesserName = (lobbyData.lastGuessedBy === lobbyData.p1Uid) ? lobbyData.p1Name : lobbyData.p2Name;
@@ -167,7 +147,6 @@ function updateGameDisplay(lobbyData) {
         hintMessageElement.innerText = '';
     }
 }
-
 
 /**
  * Called when the player clicks "Submit Guess" button.
@@ -182,33 +161,27 @@ function submitGuess(guess) {
         return;
     }
 
-
     const currentGuess = parseInt(guess);
     if (isNaN(currentGuess) || currentGuess < 1 || currentGuess > 100) {
         document.getElementById('hintMessage').innerText = "Please enter a valid number between 1 and 100";
         return;
     }
 
-
     lobbyRef.once('value').then(snapshot => {
         const data = snapshot.val();
-
 
         if (!data) {
         console.error("Lobby data missing during guess submission.");
         return;
     }
 
-
     const targetSecretNumber = myPlayerNumber === 1 ? data.p2SecretNumber : data.p1SecretNumber;
     const opponentUid = myPlayerNumber === 1 ? data.p2Uid : data.p1Uid;
-
 
         let hint = '';
         let gameOver = false;
         let winnerUid = '';
         let loserUid = '';
-
 
         if (currentGuess === targetSecretNumber) {
             hint = "Correct!";
@@ -221,19 +194,16 @@ function submitGuess(guess) {
             hint = "Too high";
         }
 
-
         const updates = {
             lastGuessedBy: currentUserUid,
             lastGuess: currentGuess,
             lastHint: hint,    
         };
 
-
         if (gameOver) {
             updates.status = 'gameOver';
             updates.winnerUid = winnerUid;
             updates.loserUid = loserUid;
-
 
             if (winnerUid === data.p1Uid) {
                 updates.p1Wins = firebase.database.ServerValue.increment(1);
@@ -246,10 +216,17 @@ function submitGuess(guess) {
             updates.currentPlayerTurn = opponentUid;
         }
 
-
         lobbyRef.update(updates)
         .then(() => {
             document.getElementById('guessInput').value ='';
         });
     }).catch(error => console.error("Error updating lobby:", error));
 }
+
+var input = document.getElementById("guessInput");
+input.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("submitGuessBtn").click();
+  }
+});
