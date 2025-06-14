@@ -45,11 +45,14 @@ function fb_getRegistration(user) {
  * If there is a record of the user in the database, the user is redirected to gameMenu.html
  */
 function fb_checkRegistration(snapshot, user) {
+const repo = "comp";
+const isGithub = window.location.hostname.includes("github.io");
+const base = isGithub ? `/${repo}/` : "/";
   console.log(snapshot.val())
   if (snapshot.val() == null) {
     console.log("the user is not registered in the data base. Please go to the register page.")
     console.log("being redirected to registration page.")
-    window.location = "/html/registration.html"
+    window.location = base + "html/registration.html"
     console.log("You have been redirected to the registration page.")
   } else {
     console.log("the user is registered in the database. Please contintue to game page!");
@@ -70,7 +73,7 @@ function fb_checkRegistration(snapshot, user) {
 
     console.log("session storage updated with user info:", userInfo);
     console.log("being redirected to game menu page.")
-    window.location = "/html/gameMenu.html";
+    window.location = base + "html/gameMenu.html";
     console.log("You have been redirected to the game page.")
   }
 }
@@ -209,7 +212,7 @@ function fb_saveScoreRocketRush(score) {
         }
       });
     } else {
-      window.location = "/html/index.html";
+      window.location = "html/index.html";
       // User is not signed in - Use the Google!
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -254,7 +257,7 @@ function fb_saveScoreGeoDash(score) {
         }
       });
     } else {
-      window.location = "/html/index.html";
+      window.location = "html/index.html";
       // User is not signed in - Use the Google!
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -336,7 +339,7 @@ function fb_readRocketRushScores(readScores) {
       firebase.database().ref('rocketRush/').orderByChild('/score')
               .startAt(1).limitToLast(5).once('value', fb_displayRocketRushTable)
     } else {
-      window.location = "/html/index.html";
+      window.location = "../../html/index.html";
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
       });
@@ -354,7 +357,7 @@ function fb_readGeoDashScores(readScores) {
     if (user) {
       firebase.database().ref('geoDash/').orderByChild('/score').startAt(1).limitToLast(5).once('value', fb_displayGeoDashTable)
     } else {
-      window.location = "/html/index.html";
+      window.location = "../../html/index.html";
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
       });
