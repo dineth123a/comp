@@ -385,6 +385,21 @@ function fb_readUserDetailsAdmin() {
         ad_processSIReadAll('OK', null, _snapshot, null, null)
       }
       
+        /**
+   * Gets called by ad_GTN function in ad_manager.js
+   * Listens for changes to the 'highscores/gtn' reference in the database and calls fb_readGTNScoresOk on success, fb_error on failure
+   */
+    function fb_readUserGTNScoresAdmin() {
+      firebase.database().ref('highscores/gtn').on('value', fb_readGTNScoresOk, fb_error)
+    }
+
+  /**
+   * Gets called by fb_readUserGTNScoresAdmin
+   * Processes the data returned in _snapshot by passing it to the ad_processGTNReadAll for further handling
+   */
+    function fb_readGTNScoresOk(_snapshot) {
+      ad_processGTNReadAll('OK', null, _snapshot, null, null)
+    }
 /**
  * Gets called by the updateLeaderboard() function
  * If signed in, fetches top 5 Rocket Rush scores from Firebase.

@@ -120,6 +120,15 @@ function ad_SI() {
   fb_readUserRocketRushScoresAdmin('rocketRush', null, ad_processSIReadAll);                            //<=====
 }
 
+function ad_GTN() {
+  console.log('%c ad_GTN(): ',
+              'color: ' + COLAD_C + '; background-color: ' + COLAD_B + ';');
+
+  ad_alterClass('ad_btn', 'grey');
+  document.getElementById("b_adGTN").style.backgroundColor = "cyan";
+  // ENSURE THE READ FUNCTION NAME & THE PATH NAME ARE CORRECT          //<=====
+  fb_readUserGTNScoresAdmin('gtn', null, ad_processGTNReadAll);
+}
 /**************************************************************/
 // ad_processUSERReadAll(_result, _path,  _snapshot, _save, _error)
 // Called by fb_readAll to handle result of read ALL USER records request.
@@ -286,6 +295,61 @@ function ad_processSIReadAll(_result, _path, _snapshot, _save, _error) {
 }
 
 /**************************************************************/
+// ad_processGTNReadAll(_result, _path,  _snapshot, _save, _error)
+// Called by fb_readAll to handle result of read ALL GTN records request.
+// Save data & update display with record info
+// Input:  result('waiting...', 'OK', 'error'), path,
+//         snapshot, where to save it & error msg if any
+//         NOTE: This is the raw data, EG snapshot, and
+//               NOT the output from snapshot.val()
+// Return: n/a
+/**************************************************************/
+//          _procFunc(_result, _path, _snapshot, _save, _error)
+function ad_processGTNReadAll(_result, _path, _snapshot, _save, _error) {
+  console.log('%c ad_processGTNReadAll(): result= ' + _result,
+              'color: ' + COLAD_C + '; background-color: ' + COLAD_B + ';');
+
+  // Note: if read was successful, _result  must = "OK"          //<=====
+  if (_result != 'OK') {
+    console.error('Database read error for ' + _path + '\n' + _error);
+    alert('Database read error; see console log for details');
+    return;
+  }
+
+  var childKey;
+  var childData;
+  var ad_adminArray = [];
+
+  if (_snapshot.val() != null) {
+    _snapshot.forEach(function(childSnapshot) {
+      childKey = childSnapshot.key;
+      childData = childSnapshot.val();
+      console.log(Object.keys(childData));
+
+      // ENSURE THE FEILDS YOU PUSH INTO THE ARRAY OF OBJECTS           //<=====
+      //  MATCH YOUR FIREBASE RECORDS FOR THE PATH                     //<=====
+      ad_adminArray.push({
+        uid: childData.uid,
+        gameName: childKey,
+        wins: childData.wins,
+        losses: childData.losses
+        //   more fields ????
+      });
+    });
+  } else {
+    console.log('%c ad_processGTNReadAll(): no records',
+                'color: ' + COLAD_C + '; background-color: ' + COLAD_B + ';');
+  }
+
+  // build & display user data
+  // MAKE SURE THE FOLOWING PARAMETERS ARE CORRECT. PARAMETER:           //<=====
+  //  7 = COLUMMN NUMBER WHICH CONTAINS THE DATABASE KEY.                //<=====
+  //  8 = DATABASE PATH THE RECORDS WERE READ FROM.                      //<=====
+  ad_displayAll("t_userData", ad_adminArray, true, "", "", "",
+    1, 'gtn'); // Assuming 'gtn' is your Firebase path for Guess The Number scores
+}
+
+/**************************************************************/
 // ad_userInput(_feildName, _data)
 // Called by finishTdEdit
 // Validate numeric data & convert string number input to numerics
@@ -303,8 +367,6 @@ function ad_userInput(_feildName, _data) {
   var vd_dataTypes = {
     displayName: 'a',
     email: 'b',
-    // Left photoURL out - its so long the table will be too wide for screen
-    //photoURL:   'b', 
     gameName: 'b',
     phone: 'n',
     age: 'n',
