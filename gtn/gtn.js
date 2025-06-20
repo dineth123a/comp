@@ -3,6 +3,7 @@ let lobbyId = sessionStorage.getItem("lobbyId");
 const lobbyRef = firebase.database().ref('lobbies/' + lobbyId);
 let myPlayerNumber = 0;
 let isMyTurn = false;
+let gtnTurns = 0;
 
 /**Waits for the HTML content to fully load before calling the
  * functions displayPlayerInfo() and setupGameListener()
@@ -108,8 +109,10 @@ function setupGameListener() {
 
       if (winnerId === currentUserUid) {
         gameStatusMessage = 'You Won!';
+          fb_saveScoreGTN(1);
       } else if (loserId === currentUserUid) {
         gameStatusMessage = 'You Lost!';
+        fb_saveLossGTN(1);
       } else {
         gameStatusMessage = 'Game Over!';
       }
@@ -156,19 +159,22 @@ function updateGameDisplay(lobbyData) {
  * Updates the database with the guess, hint, and whose turn is next.
  * If the guess is correct, the game ends and win/loss counters are updated.
  */
-function submitGuess(guess) {
+function submitGuess() {
   if (!isMyTurn) {
     console.log("It's not your turn.");
     document.getElementById('hintMessage').innerText = "It's not your turn!";
     return;
   }
 
-  const currentGuess = parseInt(guess);
+  const currentGuess = parseInt(guessInput.value);
   if (isNaN(currentGuess) || currentGuess < 1 || currentGuess > 100) {
     document.getElementById('hintMessage').innerText = "Please enter a valid number between 1 and 100";
     return;
   }
 
+  gtnTurns++;
+  console.log("Turns taken by current player: ", gtnTurns);
+  
   lobbyRef.once('value').then(snapshot => {
     const data = snapshot.val();
 

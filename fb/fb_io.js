@@ -169,14 +169,21 @@ function fb_userInfo(user) {
 
   console.log(user.uid)
   console.log(data)
-  firebase.database().ref('/rocketRush/' + userName).set({
+  firebase.database().ref('/highscores/rocketRush/' + userName).set({
     uid: user.uid,
     score: 0
   });
-  firebase.database().ref('/geoDash/' + userName).set({
+  firebase.database().ref('/highscores/geoDash/' + userName).set({
     uid: user.uid,
     score: 0
   })
+
+    firebase.database().ref('/highscores/gtn/' + userName).set({
+    uid: user.uid,
+    wins: 0,
+    losses: 0
+  })
+
   firebase.database().ref('/userDetails/' + user.uid).set(data).then(fb_goToGP)
 }
 
@@ -199,7 +206,7 @@ function fb_saveScoreRocketRush(score) {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       // User is signed in:
-      var scoreRef = firebase.database().ref('rocketRush/' + gameName);
+      var scoreRef = firebase.database().ref('highscores/rocketRush/' + gameName);
       scoreRef.once('value', (snapshot) => {
         var currentHighScore = (snapshot.val() && snapshot.val().score) || 0; 
         if (score > currentHighScore) {
@@ -219,7 +226,7 @@ function fb_saveScoreRocketRush(score) {
         // The signed-in user info.
         var user = result.user;
         console.log("saving score for RocketRush: " + score)
-        var scoreRef = firebase.database().ref('rocketRush' + gameName);
+        var scoreRef = firebase.database().ref('highscores/rocketRush/' + gameName);
         scoreRef.once('value', (snapshot) => {
           var currentHighScore = (snapshot.val() && snapshot.val().score) || 0;
           if (score > currentHighScore) {
@@ -246,7 +253,7 @@ function fb_saveScoreGeoDash(score) {
       // User is signed in:
       console.log(user.uid)
       console.log("saving " + score);
-      var scoreRef = firebase.database().ref('geoDash/' + gameName);
+      var scoreRef = firebase.database().ref('highscores/geoDash/' + gameName);
       scoreRef.once('value', (snapshot) => {
         var currentHighScore = (snapshot.val() && snapshot.val().score) || 0;
         if (score > currentHighScore) {
@@ -264,7 +271,7 @@ function fb_saveScoreGeoDash(score) {
         // The signed-in user info.
         var user = result.user;
         console.log("saving score for GeoDash: " + score);
-        var scoreRef = firebase.database().ref('geoDash/' + gameName);
+        var scoreRef = firebase.database().ref('highscores/geoDash/' + gameName);
         scoreRef.once('value', (snapshot) => {
           var currentHighScore = (snapshot.val() && snapshot.val().score) || 0;
           if (score > currentHighScore) {
@@ -278,6 +285,56 @@ function fb_saveScoreGeoDash(score) {
     }
   });
 }
+
+function fb_saveScoreGTN(winAmount) {
+  var gameName = sessionStorage.getItem("gameName");
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      console.log(user.uid);
+      var scoreRef = firebase.database().ref('highscores/gtn/' + gameName);
+      scoreRef.once('value', (snapshot) => {
+      var existingWins = (snapshot.val() && snapshot.val().wins) || 0;
+      var existingLosses = (snapshot.val() && snapshot.val().losses) || 0;
+      const newTotalWins = existingWins + winAmount;
+      console.log(`updating total wins for ${gameName}`);
+          scoreRef.set({
+            uid: user.uid,
+            wins: newTotalWins,
+            losses: existingLosses
+          });
+      });
+    } else {
+      // User is not signed in.
+      window.location = "html/index.html";
+    }
+  });
+}
+
+function fb_saveLossGTN(lossAmount) {
+    var gameName = sessionStorage.getItem("gameName");
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            var scoreRef = firebase.database().ref('highscores/gtn/' + gameName);
+            scoreRef.once('value', (snapshot) => {
+                var existingWins = (snapshot.val() && snapshot.val().wins) || 0;
+                var existingLosses = (snapshot.val() && snapshot.val().losses) || 0;
+
+                var newTotalLosses = existingLosses + lossAmount;
+
+                console.log(`Updating GTN global losses for ${gameName}: from ${existingLosses} to ${newTotalLosses}`);
+                scoreRef.set({
+                    uid: user.uid,
+                    wins: existingWins,
+                    losses: newTotalLosses
+                });
+            });
+        } else {
+            // User is not signed in.
+            window.location = "html/index.html";
+        }
+    });
+}
+
 
 /**
  * Gets called by the ad_user function in ad_manager.js
@@ -301,7 +358,7 @@ function fb_readUserDetailsAdmin() {
    * Listens for changes to the 'users' reference in the database and calls fb_readRocketRushScoresOk on success, fb_error on failure
    */
   function fb_readUserRocketRushScoresAdmin() {
-    firebase.database().ref('rocketRush').on('value', fb_readRocketRushScoresOk, fb_error)
+    firebase.database().ref('highscores/rocketRush').on('value', fb_readRocketRushScoresOk, fb_error)
     }
 
   /**
@@ -317,7 +374,7 @@ function fb_readUserDetailsAdmin() {
    * Listens for changes to the 'users' reference in the database and calls fb_readGeoDashScoresOk on success, fb_error on failure
    */
     function fb_readUserGeoDashScoresAdmin() {
-      firebase.database().ref('geoDash').on('value', fb_readGeoDashScoresOk, fb_error)
+      firebase.database().ref('highscores/geoDash').on('value', fb_readGeoDashScoresOk, fb_error)
       }
     
   /**
@@ -336,7 +393,7 @@ function fb_readUserDetailsAdmin() {
 function fb_readRocketRushScores(readScores) {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      firebase.database().ref('rocketRush/').orderByChild('/score')
+      firebase.database().ref('highscores/rocketRush/').orderByChild('/score')
               .startAt(1).limitToLast(5).once('value', fb_displayRocketRushTable)
     } else {
       window.location = "../../html/index.html";
@@ -355,7 +412,20 @@ function fb_readRocketRushScores(readScores) {
 function fb_readGeoDashScores(readScores) {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      firebase.database().ref('geoDash/').orderByChild('/score').startAt(1).limitToLast(5).once('value', fb_displayGeoDashTable)
+      firebase.database().ref('highscores/geoDash/').orderByChild('/score').startAt(1).limitToLast(5).once('value', fb_displayGeoDashTable)
+    } else {
+      window.location = "../../html/index.html";
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+      });
+    }
+  });
+}
+
+function fb_readGTNScores(readScores) {
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      firebase.database().ref('highscores/gtn/').orderByChild('wins').once('value', fb_displayGTNTable)
     } else {
       window.location = "../../html/index.html";
       var provider = new firebase.auth.GoogleAuthProvider();
@@ -372,6 +442,7 @@ function fb_readGeoDashScores(readScores) {
 function updateLeaderboard() {
   fb_readRocketRushScores();
   fb_readGeoDashScores();
+  fb_readGTNScores();
 }
 
 /**
@@ -381,7 +452,6 @@ function updateLeaderboard() {
  */
 function fb_displayRocketRushTable(snapshot) {
   var table = document.getElementById("container");
-  table.innerHTML = "";
   var rank = 0;
   if (!snapshot.exists()) {
     var row = table.insertRow(0);
@@ -417,7 +487,6 @@ function fb_displayRocketRushTable(snapshot) {
  */
 function fb_displayGeoDashTable(snapshot) {
   var table1 = document.getElementById("container2");
-  table1.innerHTML = "";
   if (!snapshot.exists()) {
     var row = table1.insertRow(0);
     var cell = row.insertCell(0);
@@ -440,6 +509,53 @@ function fb_displayGeoDashTable(snapshot) {
   });
   if (rank === 0) {
     var row = table1.insertRow(0);
+    var cell = row.insertCell(0);
+    cell.colSpan = 2;
+    cell.innerHTML = "No scores available";
+  }
+}
+
+function fb_displayGTNTable(snapshot) {
+  var table = document.getElementById("container3");
+  if (!table) {
+    console.error("GTN Leaderboard table element not found (ID: container3).");
+    return;
+  }
+  if (!snapshot.exists()) {
+    var row = table.insertRow(0);
+    var cell = row.insertCell(0);
+    cell.colSpan = 2;
+    cell.innerHTML = "No scores available";
+    return;
+  }
+
+  let scoresArray = [];
+  snapshot.forEach(child => {
+    let userRecord = child.val();
+    if (userRecord.wins !== undefined && userRecord.wins !== null) {
+      scoresArray.push({
+        gameName: child.key,
+        wins: userRecord.wins,
+        losses: userRecord.losses || 0
+      });
+    }
+  });
+
+  scoresArray.sort((a, b) => b.wins - a.wins);
+
+  var rank = 0;
+  for (let i = 0; i < scoresArray.length && rank < 5; i++) {
+    let record = scoresArray[i];
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = record.gameName;
+    cell2.innerHTML = record.wins;
+    rank++;
+  }
+
+  if (rank === 0) {
+    var row = table.insertRow(0);
     var cell = row.insertCell(0);
     cell.colSpan = 2;
     cell.innerHTML = "No scores available";
