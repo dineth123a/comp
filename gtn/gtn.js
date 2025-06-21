@@ -117,7 +117,16 @@ function setupGameListener() {
         gameStatusMessage = 'Game Over!';
       }
       document.getElementById('gameStatus').innerText = gameStatusMessage;
-      document.getElementById('hintMessage').innerText = `Player 1's number was ${lobbyData.p1SecretNumber}, Player 2's number was ${lobbyData.p2SecretNumber}.`;
+      
+      let opponentSecretNumber = 0;
+      if (myPlayerNumber === 1) {
+        // If I am Player 1, I was guessing Player 2's number
+        opponentSecretNumber = lobbyData.p2SecretNumber;
+      } else {
+        // If I am Player 2, I was guessing Player 1's number
+        opponentSecretNumber = lobbyData.p1SecretNumber;
+      }
+      document.getElementById('hintMessage').innerText = `The number was ${opponentSecretNumber}.`;
       return;
     }
 
@@ -139,15 +148,18 @@ function updateGameDisplay(lobbyData) {
   const hintMessageElement = document.getElementById('hintMessage');
 
   const currentPlayerName = (lobbyData.currentPlayerTurn === lobbyData.p1Uid) ? lobbyData.p1Name : lobbyData.p2Name;
-  gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
 
   if (isMyTurn) {
-    gameStatusElement.innerText += " (Your turn)";
+    gameStatusElement.innerText = "It's your turn to guess";
+  } else {
+    gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
   }
 
   if (lobbyData.lastGuessedBy && lobbyData.lastGuess && lobbyData.lastHint) {
+    if (lobbyData.lastGuessedBy === currentUserUid) {
     const guesserName = (lobbyData.lastGuessedBy === lobbyData.p1Uid) ? lobbyData.p1Name : lobbyData.p2Name;
-    hintMessageElement.innerText = `${guesserName} guessed ${lobbyData.lastGuess}. Hint: ${lobbyData.lastHint}`;
+    hintMessageElement.innerText = `You guessed ${lobbyData.lastGuess}. Hint: ${lobbyData.lastHint}`;
+    }
   } else {
     hintMessageElement.innerText = '';
   }
@@ -214,11 +226,11 @@ function submitGuess() {
       updates.loserUid = loserUid;
 
       if (winnerUid === data.p1Uid) {
-        updates.p1Wins = firebase.database.ServerValue.increment(1);
-        updates.p2Losses = firebase.database.ServerValue.increment(1);
+        updates.p1Wins = (data.p1Wins || 0) + 1;
+        updates.p2Losses = (data.p2Losses || 0) + 1;
       } else {
-        updates.p2Wins = firebase.database.ServerValue.increment(1);
-        updates.p1Losses = firebase.database.ServerValue.increment(1);
+        updates.p2Wins = (data.p2Wins || 0) + 1;
+        updates.p1Losses = (data.p1Losses || 0) + 1;
       }
     } else {
       updates.currentPlayerTurn = opponentUid;
