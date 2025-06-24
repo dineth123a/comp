@@ -578,3 +578,90 @@ function fb_displayGTNTable(snapshot) {
     cell.innerHTML = "No scores available";
   }
 }
+
+
+function initializeAuthAndNav() {
+  // Get the admin link element by its ID
+  // It's important to ensure this ID exists in your HTML navigation
+  const adminLink = document.getElementById('adminLink');
+
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      // User is signed in
+      const userId = user.uid;
+      const userDetailsRef = firebase.database().ref('userDetails/' + userId);
+      // Reference to the user's admin status in the 'adminAccess' path
+      const adminAccessRef = firebase.database().ref('adminAccess/' + userId + '/isAdmin');
+
+      // First, check if the user is registered in 'userDetails'
+      userDetailsRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log('User is registered:', snapshot.val());
+
+          // User is registered, now check their admin status
+          adminAccessRef.once('value').then((adminSnapshot) => {
+            if (adminSnapshot.exists() && adminSnapshot.val() === true) {
+              console.log('User is an admin. Showing admin link.');
+              // Only try to show the link if it exists on the page
+              if (adminLink) {
+                adminLink.style.display = 'block'; // Show the Admin link
+              }
+            } else {
+              console.log('User is not an admin or admin status not found. Hiding admin link.');
+              // Always ensure the link is hidden for non-admins
+              if (adminLink) {
+                adminLink.style.display = 'none';
+              }
+            }
+          }).catch((error) => {
+            console.error("Error checking admin status:", error);
+            // Hide admin link on error
+            if (adminLink) {
+              adminLink.style.display = 'none';
+            }
+          });
+
+        } else {
+          // User is authenticated but not registered in 'userDetails', redirect to registration
+          console.log('User not registered in userDetails, redirecting to registration.html');
+          // Use a consistent absolute path if your HTML files are in different subdirectories
+          window.location.href = '/html/registration.html';
+        }
+      }).catch((error) => {
+        console.error("Error checking userDetails:", error);
+        // Redirect to registration on any error during userDetails check
+        window.location.href = '/html/registration.html';
+      });
+
+    } else {
+      // No user is signed in, redirect to registration page
+      console.log('No user signed in, redirecting to registration.html');
+      window.location.href = '/html/registration.html';
+      // Hide admin link if no user is signed in
+      if (adminLink) {
+        adminLink.style.display = 'none';
+      }
+    }
+  });
+}
+
+/**
+ * Opens the side navigation bar.
+ */
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+  // The 'main' content area should shift to the right when the nav opens
+  document.getElementById("main").style.marginLeft = "250px";
+}
+
+/**
+ * Closes the side navigation bar.
+ */
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  // The 'main' content area should return to its original position
+  document.getElementById("main").style.marginLeft = "0";
+}
+
+// Call the initialization function when the DOM content is fully loaded
+document.addEventListener('DOMContentLoaded', initializeAuthAndNav);

@@ -30,7 +30,7 @@
       <a href="../html/RocketRush.html">Rocket Rush</a>
       <a href="../html/GeoDash.html">GeoDash</a>
       <a href="../html/leaderboard.html">Leaderboard</a>
-      <a href="../ad_manager/ad_manager.html">Admin</a>
+      <a href="../ad_manager/ad_manager.html" id="adminLink" style="display:none;">Admin</a>
       <a href="gtnLobby.html">GTN Lobby</a>
 
   </div>
@@ -39,35 +39,6 @@
 
   <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
 
-  <script>
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        // User is signed in
-        const userId = user.uid;
-        const userRef = firebase.database().ref('userDetails/' + userId);
-
-        userRef.once('value').then((snapshot) => {
-          if (snapshot.exists()) {
-            // User is registered, allow access
-            console.log('User is registered:', snapshot.val());
-          } else {
-            // User is not registered, redirect to registration page
-            window.location.href = '../html/registration.html';
-          }
-        });
-      }
-    });
-
-    function openNav() {
-      document.getElementById("mySidenav").style.width = "250px";
-      document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    function closeNav() {
-      document.getElementById("mySidenav").style.width = "0";
-      document.getElementById("main").style.marginLeft = "0";
-    }
-  </script>
 <div class="lobby-container">
   <div class="lobby-left">
     <table>
