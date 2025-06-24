@@ -5,6 +5,7 @@ let myPlayerNumber = 0;
 let isMyTurn = false;
 let gtnTurns = 0;
 let isRedirecting = false;
+let currentRound = 0;
 
 /**Waits for the HTML content to fully load before calling the
  * functions displayPlayerInfo() and setupGameListener()
@@ -52,6 +53,7 @@ function setupOnDisconnectForGame() {
             lastHint: null,
             p1SecretNumber: null,
             p2SecretNumber: null,
+            rematchRequestedBy: null
         };
 
         lobbyRef.onDisconnect().update(updatesOnDisconnect)
@@ -104,6 +106,7 @@ function displayPlayerInfo() {
       return;
     }
 
+    currentRound = lobbyData.gameRound || 0;
     updatePlayerInfoDisplay(lobbyData);
     setupOnDisconnectForGame();
   });
@@ -145,12 +148,39 @@ function updatePlayerInfoDisplay(lobbyData) {
 function setupGameListener() {
   lobbyRef.on('value', (snapshot) => {
     const lobbyData = snapshot.val();
+    const rematchBtn = document.getElementById('rematchBtn');
 
     if (!lobbyData || lobbyData.status === 'abandoned') {
       console.log("Lobby data is null or deleted or abandoned. Redirecting to lobby");
+      const reason = lobbyData ? (lobbyData.gameEndedReason || "Opponent left the game") : "Lobby no longer exists";
+      document.getElementById("gameStatus").innerText = reason;
+      document.getElementById("hintMessage").innerText = "Returning to lobby now...";
       lobbyRef.off();
-      redirectToLobby();
+      setTimeout(() => redirectToLobby(), 3000);
       return;
+    }
+
+    if (lobbyData.gameRound !== undefined) {
+      currentRound = lobbyData.gameRound;
+    }
+
+    if (lobbyData.status === 'gameOver' && lobbyData.rematchRequestedBy) {
+      let opponentRequestedMatch = false;
+      if (myPlayerNumber === 1 && lobbyData.rematchRequestedBy === lobbyData.p2Uid) {
+        opponentRequestedMatch = true;
+      } else if (myPlayerNumber === 2 && lobbyData.rematchRequestedBy === lobbyData.p1Uid) {
+        opponentRequestedMatch = true;
+      }
+
+      if (opponentRequestedMatch) {
+        document.getElementById('gameStatus').innerText = "Opponent wants to play again! Click play again to start a new round";
+        rematchBtn.style.display = 'block';
+        document.getElementById('submitGuessBtn').disabled = true;
+        document.getElementById('guessInput').disabled = true;
+      } else if (lobbyData.rematchRequestedBy === currentUserUid) {
+        document.getElementById('gameStatus').innerText = "Rematch requested. Waiting for opponent...";
+        rematchBtn.style.display = 'none';
+      }
     }
 
     if (lobbyData.status === 'ready' && !lobbyData.p1SecretNumber && !lobbyData.p2SecretNumber) {
@@ -159,12 +189,24 @@ function setupGameListener() {
         if (!current || current.status !== 'ready' || current.p1SecretNumber || current.p2SecretNumber) {
           return;
         }
+        current.gameRound = (current.gameRound || 0) + 1;
         current.p1SecretNumber = Math.floor(Math.random() * 100) + 1;
         current.p2SecretNumber = Math.floor(Math.random() * 100) + 1;
         current.currentPlayerTurn = Math.random() < 0.5 ? current.p1Uid : current.p2Uid;
+        current.lastGuessedBy = null;
+        current.lastGuess = null;
+        current.lastHint = null;
+        current.rematchRequestedBy = null;
+        current.gameEndedReason = null;
+        current.winnerUid = null;
+        current.loserUid = null;
+
         return current;
       }).then(() => {
         console.log("Game intialisation transaction complete.");
+        if (rematchBtn) rematchBtn.style.display = 'none';
+        document.getElementById('submitGuessBtn').disabled = false;
+        document.getElementById('guessInput').disabled = false;
       }).catch(error => {
         console.error("Error during game initialisation transaction:", error);
     });
@@ -183,7 +225,8 @@ function setupGameListener() {
         lastGuess: null,
         lastHint: null,
         p1SecretNumber: null,
-        p2SecretNumber: null
+        p2SecretNumber: null,
+        rematchRequestedBy: null
       }).then(() => {
         document.getElementById("gameStatus").innerText = "Opponent disconnected. Game ended";
         document.getElementById("hintMessage").innerText = "Returning to lobby...";
@@ -209,7 +252,7 @@ function setupGameListener() {
       const loserId = lobbyData.loserUid;
       let gameStatusMessage = '';
 
-      const scoreUpdatedFlag = sessionStorage.getItem(`gtn_score_updated_${lobbyId}`);
+      const scoreUpdatedFlag = sessionStorage.getItem(`gtn_score_updated_${lobbyId}_${currentRound}`);
       if (!scoreUpdatedFlag) {
         if (winnerId === currentUserUid) {
           gameStatusMessage = 'You Won!';
@@ -243,8 +286,10 @@ function setupGameListener() {
         opponentSecretNumber = lobbyData.p1SecretNumber;
       }
       document.getElementById('hintMessage').innerText = `The number was ${opponentSecretNumber}.`;
+      if (!lobbyData.rematchRequestedBy) {
+        if (rematchBtn) rematchBtn.style.display = 'block';
+      }
       document.querySelector('button[onclick="leaveGame()"]').style.display = 'block';
-      lobbyRef.off();
       return;
     }
 
@@ -264,6 +309,40 @@ function setupGameListener() {
   });
 }
 
+function requestRematch() {
+  console.log("Rematch requested by current user");
+  const rematchBtn = document.getElementById('rematchBtn');
+  rematchBtn.disabled = true;
+
+  lobbyRef.transaction(current => {
+    if (current) {
+      if (!current.rematchRequestedBy) {
+        current.rematchRequestedBy = currentUserUid;
+      } else if (current.rematchRequestedBy !== currentUserUid) {
+        current.gameRound = (current.gameRound || 0) + 1;
+        current.p1SecretNumber = Math.floor(Math.random() * 100) + 1;
+        current.p2SecretNumber = Math.floor(Math.random() * 100) + 1;
+        current.currentPlayerTurn = Math.random() < 0.5 ? current.p1Uid : current.p2Uid;
+        current.lastGuessedBy = null;
+        current.lastGuess = null;
+        current.lastHint = null;
+        current.status = 'ready';
+        current.rematchRequestedBy = null;
+        current.gameEndedReason = null;
+        current.winnerUid = null;
+        current.loserUid = null;
+      }
+    }
+    return current;
+  }).then(() => {
+    console.log("Rematch request processed");
+    rematchBtn.disabled = false;
+  }).catch(error => {
+    console.error("Error requesting rematch:", error);
+    rematchBtn.disabled = false;
+  });
+}
+
 /**
  * Updates the user interface to show:
  *  - Whose turn it is.
@@ -272,13 +351,15 @@ function setupGameListener() {
 function updateGameDisplay(lobbyData) {
   const gameStatusElement = document.getElementById('gameStatus');
   const hintMessageElement = document.getElementById('hintMessage');
+  const rematchBtn = document.getElementById('rematchBtn');
 
   const currentPlayerName = lobbyData.currentPlayerTurn ?
   (lobbyData.currentPlayerTurn === lobbyData.p1Uid ? lobbyData.p1Name : lobbyData.p2Name) :
   '';
 
-  if (lobbyData.currentPlayerTurn) {
-    if (isMyTurn) {
+  if (lobbyData.status !== 'gameOver' && !lobbyData.rematchRequestedBy) {
+    if (lobbyData.currentPlayerTurn) {
+      if (isMyTurn) {
       gameStatusElement.innerText = "It's your turn to guess";
     } else {
       gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
@@ -286,6 +367,8 @@ function updateGameDisplay(lobbyData) {
   } else {
     gameStatusElement.innerText = "Waiting for game to start...";
   }
+}
+
 
   if (lobbyData.lastGuessedBy && lobbyData.lastGuess !== null && lobbyData.lastHint) {
     if (lobbyData.lastGuessedBy === currentUserUid) {
@@ -402,6 +485,7 @@ function leaveGame() {
       lastHint: null,
       p1SecretNumber: null,
       p2SecretNumber: null,
+      rematchRequestedBy: null
   });
 })
 .then(() => {

@@ -551,7 +551,7 @@ function fb_displayGTNTable(snapshot) {
       scoresArray.push({
         gameName: child.key,
         wins: userRecord.wins,
-        losses: userRecord.losses || 0
+        losses: userRecord.losses
       });
     }
   });
@@ -564,8 +564,10 @@ function fb_displayGTNTable(snapshot) {
     var row = table.insertRow(-1);
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
     cell1.innerHTML = record.gameName;
     cell2.innerHTML = record.wins;
+    cell3.innerHTML = record.losses;
     rank++;
   }
 
