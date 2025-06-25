@@ -180,8 +180,8 @@ function fb_userInfo(user) {
 
     firebase.database().ref('/highscores/gtn/' + userName).set({
     uid: user.uid,
-    wins: 0,
-    losses: 0
+    totalWins: 0,
+    totalLosses: 0
   })
 
   firebase.database().ref('/userDetails/' + user.uid).set(data).then(fb_goToGP)
@@ -293,9 +293,9 @@ function fb_saveScoreGTN(winAmount) {
       console.log(user.uid);
       var scoreRef = firebase.database().ref('highscores/gtn/' + gameName);
       scoreRef.once('value', (snapshot) => {
-      var existingWins = (snapshot.val() && snapshot.val().wins) || 0;
-      var existingLosses = (snapshot.val() && snapshot.val().losses) || 0;
-      const newTotalWins = existingWins + winAmount;
+      var existingTotalWins = (snapshot.val() && snapshot.val().totalWins) || 0;
+      var existingTotalLosses = (snapshot.val() && snapshot.val().totalLosses) || 0;
+      const newTotalWins = existingTotalWins + winAmount;
       console.log(`updating total wins for ${gameName}`);
           scoreRef.set({
             uid: user.uid,
@@ -316,15 +316,15 @@ function fb_saveLossGTN(lossAmount) {
         if (user) {
             var scoreRef = firebase.database().ref('highscores/gtn/' + gameName);
             scoreRef.once('value', (snapshot) => {
-                var existingWins = (snapshot.val() && snapshot.val().wins) || 0;
-                var existingLosses = (snapshot.val() && snapshot.val().losses) || 0;
+                var existingTotalWins = (snapshot.val() && snapshot.val().totalWins) || 0;
+                var existingTotalLosses = (snapshot.val() && snapshot.val().totalLosses) || 0;
 
-                var newTotalLosses = existingLosses + lossAmount;
+                var newTotalLosses = existingTotalLosses + lossAmount;
 
                 console.log(`Updating GTN global losses for ${gameName}: from ${existingLosses} to ${newTotalLosses}`);
                 scoreRef.set({
                     uid: user.uid,
-                    wins: existingWins,
+                    wins: existingTotalWins,
                     losses: newTotalLosses
                 });
             });

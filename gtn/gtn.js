@@ -113,12 +113,32 @@ function displayPlayerInfo() {
 }
 
 function updatePlayerInfoDisplay(lobbyData) {
+  let p1TotalWins = 0;
+  let p1TotalLosses = 0;
+  let p2TotalWins = 0;
+  let p2TotalLosses = 0;
+
+  // Fetch player 1's total scores
+    firebase.database().ref('highscores/gtn/' + lobbyData.p1Name).once('value')
+    .then(p1ScoresSnapshot => {
+    const p1Scores = p1ScoresSnapshot.val();
+    p1TotalWins = (p1Scores && p1Scores.totalWins) || 0;
+    p1TotalLosses = (p1Scores && p1Scores.totalLosses) || 0;
+    return firebase.database().ref('highscores/gtn/' + lobbyData.p2Name).once('value');
+  })
+.then(p2ScoresSnapshot => {
+    const p2Scores = p2ScoresSnapshot.val();
+    p2TotalWins = (p2Scores && p2Scores.totalWins) || 0;
+    p2TotalLosses = (p2Scores && p2Scores.totalLosses) || 0;
+
     //Player 1 Info
     document.getElementById('player1Info').innerHTML = `
     <h3>Player 1 (${lobbyData.p1Name || "Player 1"})</h3>
     <img id="player1Photo" src="${lobbyData.p1Photo || ""}" alt="Player 1 Photo">
-    <p>Wins: ${lobbyData.p1Wins || 0}</p>
-    <p>Losses: ${lobbyData.p1Losses || 0}</p>
+    <p>Current Wins: ${lobbyData.p1Wins || 0}</p>
+    <p>Current Losses: ${lobbyData.p1Losses || 0}</p>
+    <p>Total Wins: ${p1TotalWins}</p>
+    <p>Total Losses: ${p1TotalLosses}</p>
     <p id="player1SecretNumberDisplay"></p>
     `;
 
@@ -126,8 +146,10 @@ function updatePlayerInfoDisplay(lobbyData) {
     document.getElementById('player2Info').innerHTML = `
     <h3>Player 2 (${lobbyData.p2Name || "Waiting for player 2..."})</h3>
     <img id="player2Photo" src="${lobbyData.p2Photo || ""}" alt="Player 2 Photo">
-    <p>Wins: ${lobbyData.p2Wins || 0}</p>
-    <p>Losses: ${lobbyData.p2Losses || 0}</p>
+    <p>Current Wins: ${lobbyData.p2Wins || 0}</p>
+    <p>Current Losses: ${lobbyData.p2Losses || 0}</p>
+    <p>Total Wins: ${p2TotalWins}</p>
+    <p>Total Losses: ${p2TotalLosses}</p>
     <p id="player2SecretNumberDisplay"></p>
     `;
 
@@ -136,8 +158,13 @@ function updatePlayerInfoDisplay(lobbyData) {
     } else if (myPlayerNumber === 2 && lobbyData.p2SecretNumber) {
       document.getElementById('player2SecretNumberDisplay').innerText = `Your secret number: ${lobbyData.p2SecretNumber}`;
     }
+    })
+    .catch(error => {
+      console.error("Error fetching player total scores:", error);
+      document.getElementById('player1Info').innerHTML = `<p>Error loading Player 1 totals</p>`;
+      document.getElementById('player2Info').innerHTML = `<p>Error loading Player 2 totals</p>`;
+    })
   }
-
 /**
  * Sets up a real-time listener on the lobby to track game progress.
  * Initialises secret numbers if not set.
