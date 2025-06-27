@@ -1,64 +1,68 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Game Menu</title>
+    <link href="../css/gameMenu.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Game Menu</title>
-  <link href="../css/gameMenu.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- P5.js & P5.play ***************************************-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.4/p5.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/addons/p5.sound.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer">
+    </script>
+    
+    <!-- p5play v3 — hosted on official site, ******************-->
+    <script src="https://p5play.org/v3/planck.min.js"></script>
+    <script src="https://p5play.org/v3/p5play.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/p5.js"
-    integrity="sha512-bzpp8klYroR6PFgL3RJ+VkvY5hJna7Zd38OA56peUDHSNQpSiN9lDQVnMYtcw7hoAVhbR6mAOdH+ymzg1o+G0A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/addons/p5.sound.js"
-    integrity="sha512-TU9AWtV5uUZPX8dbBAH8NQF1tSdigPRRT82vllAQ1Ke28puiqLA6ZVKxtUGlgrH6yWFnkKy+sE6luNEGH9ar0A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://p5play.org/v3/planck.min.js"></script>
-  <script src="https://p5play.org/v3/p5play.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
-  <script src="../fb/fb_setup.js"></script>
-  <script src="../fb/fb_io.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+    <script src="../fb/fb_setup.js"></script>
+    <script src="../fb/fb_io.js"></script>
   </head>
 
-<body>
-  <div id="main">
-    <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="gameMenu.html">Home</a>
-      <a href="RocketRush.html">Rocket Rush</a>
-      <a href="GeoDash.html">GeoDash</a>
-      <a href="leaderboard.html">Leaderboard</a>
-      <a href="../ad_manager/ad_manager.html" id="adminLink" style="display:none;">Admin</a>
-      <a href="../gtnLobby/gtnLobby.html">GTN Lobby</a>
+  <body onload="initializeAuthAndNav()">
+    <div id="main">
+      <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="gameMenu.html">Home</a>
+        <a href="RocketRush.html">Rocket Rush</a>
+        <a href="GeoDash.html">GeoDash</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="../ad_manager/ad_manager.html" id="adminLink" style="display:none;">Admin</a>
+        <a href="../gtnLobby/gtnLobby.html">GTN Lobby</a>
+      </div>
+
+      <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
+      <h1> GAMES </h1>
+      <div class="image-container">
+        <div class="image-box">
+          <img src="../Images/RocketRushScreenshot.png" alt="Image of Rocket Rush game" class="RocketRush-image">
+          <p class="image-description">Rocket Rush: A fun and exciting game where you avoid missiles and collect coins
+            and try to get as high of a score as possible. The longer you stay in, the higher the score</p>
+        </div>
+        <div class="image-box">
+          <img src="../Images/GeoDashScreenshot.png" alt="Image of GeoDash game" class="GeoDash-image">
+          <p class="image-description">Geo Dash: A simple yet amazing game where you jump over the incoming obstacles
+            and see how high of a score you can get</p>
+        </div>
+        <div class="image-box">
+          <img src="../Images/gtnScreenshot.png" alt="Image of Guess The Number game" class="gtn-image">
+          <p class="image-description">Guess The Number (GTN): A fun game where you try to guess the correct
+            within a set range. Use logic and feedback to narrow down your guesses and see how quickly you can find
+            the right answer</p>
+        </div>
+      </div>
     </div>
-
-    <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
-
-    <h1> GAMES </h1>
-    <div class="image-container">
-      <div class="image-box">
-        <img src="../Images/RocketRushScreenshot.png" alt="Image of Rocket Rush game" class="RocketRush-image">
-        <p class="image-description">Rocket Rush: A fun and exciting game where you avoid missiles and collect coins
-          and try to get as high of a score as possible. The longer you stay in, the higher the score</p>
-      </div>
-      <div class="image-box">
-        <img src="../Images/GeoDashScreenshot.png" alt="Image of GeoDash game" class="GeoDash-image">
-        <p class="image-description">Geo Dash: A simple yet amazing game where you jump over the incoming obstacles
-          and see how high of a score you can get</p>
-      </div>
-      <div class="image-box">
-        <img src="../Images/gtnScreenshot.png" alt="Image of Guess The Number game" class="gtn-image">
-        <p class="image-description">Guess The Number (GTN): A fun game where you try to guess the correct
-          within a set range. Use logic and feedback to narrow down your guesses and see how quickly you can find
-          the right answer</p>
-      </div>
-    </div>
-  </div>
-  <div class="footer"></div>
-</body>
-
+    <div class="footer"></div>
+  </body>
 </html>

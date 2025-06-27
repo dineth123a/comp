@@ -20,50 +20,62 @@ document.addEventListener('DOMContentLoaded', () => {
   setupGameListener();
 });
 
+/**
+ * This function sets up an onDisconnect handler for the current player's presence in the database lobby.
+ * When a player disconnects, this handler will update lobby status to 'abandoned' and clear game-related states.
+ * 
+ */
 function setupOnDisconnectForGame() {
-    console.log("Setting up onDisconnect for game session...");
+  console.log("Setting up onDisconnect for game session...");
 
-    lobbyRef.once('value').then(snapshot => {
-        const lobbyData = snapshot.val();
-        if (!lobbyData) {
-            console.warn("Lobby data not found when setting up onDisconnect.");
-            redirectToLobby();
-            return;
-        }
+  lobbyRef.once('value').then(snapshot => {
+    const lobbyData = snapshot.val();
+      if (!lobbyData) {
+        console.warn("Lobby data not found when setting up onDisconnect.");
+        redirectToLobby();
+        return;
+      }
 
-        let playerUid = null;
-        if (currentUserUid === lobbyData.p1Uid) {
-          playerUid = lobbyData.p1Uid;
-        } else if (currentUserUid === lobbyData.p2Uid) {
-          playerUid = lobbyData.p2Uid;
-        }
+      let playerUid = null;
+      if (currentUserUid === lobbyData.p1Uid) {
+        playerUid = lobbyData.p1Uid;
+      } else if (currentUserUid === lobbyData.p2Uid) {
+        playerUid = lobbyData.p2Uid;
+      }
 
-        if (!playerUid) {
-          console.warn("User is not recognised as P1 or P2 in this lobby. Cannot set onDisconnect");
-            redirectToLobby();
-            return;
-        }
+      if (!playerUid) {
+        console.warn("User is not recognised as P1 or P2 in this lobby. Cannot set onDisconnect");
+        redirectToLobby();
+        return;
+      }
 
-        const updatesOnDisconnect = {
-            status: 'abandoned',
-            gameEndedReason: `${myPlayerNumber === 1 ? 'Player 1' : 'Player 2'} disconnected`,
-            currentPlayerTurn: null,
-            lastGuessedBy: null,
-            lastGuess: null,
-            lastHint: null,
-            p1SecretNumber: null,
-            p2SecretNumber: null,
-            rematchRequestedBy: null
-        };
+      const updatesOnDisconnect = {
+        status: 'abandoned',
+        gameEndedReason: `${myPlayerNumber === 1 ? 'Player 1' : 'Player 2'} disconnected`,
+        currentPlayerTurn: null,
+        lastGuessedBy: null,
+        lastGuess: null,
+        lastHint: null,
+        p1SecretNumber: null,
+        p2SecretNumber: null,
+        rematchRequestedBy: null
+      };
 
-        lobbyRef.onDisconnect().update(updatesOnDisconnect)
-        .then(() => console.log(`onDisconnect for ${playerUid} set to abandon lobby lobby and clear game state`))
-        .catch(error => console.error("Failed to set onDisconnect for player", error));
-    }).catch(error => {
-        console.error("Error setting up onDisconnect for game:", error);
-    });
+      lobbyRef.onDisconnect().update(updatesOnDisconnect)
+      .then(() => console.log(`onDisconnect for ${playerUid} set to abandon lobby lobby and clear game state`))
+      .catch(error => console.error("Failed to set onDisconnect for player", error));
+  }).catch(error => {
+    console.error("Error setting up onDisconnect for game:", error);
+  });
 }
 
+/**
+ * Redirects the user back to the lobby page.
+ * Includes 'isRedirecting' to prevent multiple, fast redirects.
+ * Before redirecting, cleans up session by removing 'lobbyId' from session storage
+ * Remove any active Firebase listeners on the current lobby,
+ * and cancels any pending onDisconnect operations
+ */
 function redirectToLobby() {
   if (!isRedirecting) {
     isRedirecting = true;
@@ -112,6 +124,11 @@ function displayPlayerInfo() {
   });
 }
 
+/**
+ * Updates the player information displayed on the game user interface
+ * including player names, photos, current wins/losses for the ongoing lobby, and 
+ * total lifetime wins/losses fetched from separate 'highscores' path
+ */
 function updatePlayerInfoDisplay(lobbyData) {
   let p1TotalWins = 0;
   let p1TotalLosses = 0;
@@ -119,14 +136,14 @@ function updatePlayerInfoDisplay(lobbyData) {
   let p2TotalLosses = 0;
 
   // Fetch player 1's total scores
-    firebase.database().ref('highscores/gtn/' + lobbyData.p1Name).once('value')
-    .then(p1ScoresSnapshot => {
+  firebase.database().ref('highscores/gtn/' + lobbyData.p1Name).once('value')
+  .then(p1ScoresSnapshot => {
     const p1Scores = p1ScoresSnapshot.val();
     p1TotalWins = (p1Scores && p1Scores.totalWins) || 0;
     p1TotalLosses = (p1Scores && p1Scores.totalLosses) || 0;
     return firebase.database().ref('highscores/gtn/' + lobbyData.p2Name).once('value');
   })
-.then(p2ScoresSnapshot => {
+  .then(p2ScoresSnapshot => {
     const p2Scores = p2ScoresSnapshot.val();
     p2TotalWins = (p2Scores && p2Scores.totalWins) || 0;
     p2TotalLosses = (p2Scores && p2Scores.totalLosses) || 0;
@@ -158,13 +175,14 @@ function updatePlayerInfoDisplay(lobbyData) {
     } else if (myPlayerNumber === 2 && lobbyData.p2SecretNumber) {
       document.getElementById('player2SecretNumberDisplay').innerText = `Your secret number: ${lobbyData.p2SecretNumber}`;
     }
-    })
-    .catch(error => {
-      console.error("Error fetching player total scores:", error);
-      document.getElementById('player1Info').innerHTML = `<p>Error loading Player 1 totals</p>`;
-      document.getElementById('player2Info').innerHTML = `<p>Error loading Player 2 totals</p>`;
-    })
-  }
+  })
+  .catch(error => {
+    console.error("Error fetching player total scores:", error);
+    document.getElementById('player1Info').innerHTML = `<p>Error loading Player 1 totals</p>`;
+    document.getElementById('player2Info').innerHTML = `<p>Error loading Player 2 totals</p>`;
+  })
+}
+
 /**
  * Sets up a real-time listener on the lobby to track game progress.
  * Initialises secret numbers if not set.
@@ -172,6 +190,7 @@ function updatePlayerInfoDisplay(lobbyData) {
  * Checks for game over and displays result.
  * Updates the user interface to show whose turn it is and the latest hint.
  */
+
 function setupGameListener() {
   lobbyRef.on('value', (snapshot) => {
     const lobbyData = snapshot.val();
@@ -229,16 +248,16 @@ function setupGameListener() {
         current.loserUid = null;
 
         return current;
-      }).then(() => {
-        console.log("Game intialisation transaction complete.");
-        if (rematchBtn) rematchBtn.style.display = 'none';
-        document.getElementById('submitGuessBtn').disabled = false;
-        document.getElementById('guessInput').disabled = false;
-      }).catch(error => {
-        console.error("Error during game initialisation transaction:", error);
-    });
-    return;
-  }
+        }).then(() => {
+          console.log("Game intialisation transaction complete.");
+          if (rematchBtn) rematchBtn.style.display = 'none';
+          document.getElementById('submitGuessBtn').disabled = false;
+          document.getElementById('guessInput').disabled = false;
+        }).catch(error => {
+          console.error("Error during game initialisation transaction:", error);
+        });
+      return;
+    }
 
     const opponentUid = myPlayerNumber === 1 ? lobbyData.p2Uid : lobbyData.p1Uid;
     if (lobbyData.status === 'ready' && (!opponentUid || lobbyData.status === 'abandoned')) {
@@ -336,6 +355,11 @@ function setupGameListener() {
   });
 }
 
+/**
+ * Allows players to request a rematch after a round has ended.
+ * Uses Firebase transaction to update the lobby's state.
+ * This function resets the game state, generates new secret numbers, and randomly assigns first turn
+ */
 function requestRematch() {
   console.log("Rematch requested by current user");
   const rematchBtn = document.getElementById('rematchBtn');
@@ -371,9 +395,8 @@ function requestRematch() {
 }
 
 /**
- * Updates the user interface to show:
- *  - Whose turn it is.
- *  - The most recent guess and hint (Too high / Too low / Correct).
+ * This function updates the visual elements of the game
+ * Displays whose turn it is, and shows the most recent guess and hint provided in the game.
  */
 function updateGameDisplay(lobbyData) {
   const gameStatusElement = document.getElementById('gameStatus');
@@ -387,19 +410,19 @@ function updateGameDisplay(lobbyData) {
   if (lobbyData.status !== 'gameOver' && !lobbyData.rematchRequestedBy) {
     if (lobbyData.currentPlayerTurn) {
       if (isMyTurn) {
-      gameStatusElement.innerText = "It's your turn to guess";
+        gameStatusElement.innerText = "It's your turn to guess";
+      } else {
+        gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
+      }
     } else {
-      gameStatusElement.innerText = `It's ${currentPlayerName}'s turn to guess`;
+      gameStatusElement.innerText = "Waiting for game to start...";
     }
-  } else {
-    gameStatusElement.innerText = "Waiting for game to start...";
   }
-}
 
 
   if (lobbyData.lastGuessedBy && lobbyData.lastGuess !== null && lobbyData.lastHint) {
     if (lobbyData.lastGuessedBy === currentUserUid) {
-    hintMessageElement.innerText = `You guessed ${lobbyData.lastGuess}. Hint: ${lobbyData.lastHint}`;
+      hintMessageElement.innerText = `You guessed ${lobbyData.lastGuess}. Hint: ${lobbyData.lastHint}`;
     } else {
       const opponentName = (lobbyData.lastGuessedBy === lobbyData.p1Uid) ? lobbyData.p1Name : lobbyData.p2Name;
       hintMessageElement.innerText = `${opponentName} guessed ${lobbyData.lastGuess}. Hint: ${lobbyData.lastHint}`;
@@ -496,12 +519,18 @@ function submitGuess() {
 });
 }
 
+/**
+ * This handles the process of a player leaving the game
+ * It cancels any pending onDisconnect operations for current user in lobby.
+ * It updates lobby status in database to 'abandoned' and clears game related states
+ * Redirects user to the lobby page
+ */
 function leaveGame() {
   console.log("Player leaving the game");
 
-    lobbyRef.onDisconnect().cancel()
-    .then(() => {
-      console.log("Disconnect cancelled for current session");
+  lobbyRef.onDisconnect().cancel()
+  .then(() => {
+    console.log("Disconnect cancelled for current session");
 
     return lobbyRef.update({
       status: 'abandoned',
@@ -513,9 +542,9 @@ function leaveGame() {
       p1SecretNumber: null,
       p2SecretNumber: null,
       rematchRequestedBy: null
-  });
-})
-.then(() => {
+    });
+  })
+  .then(() => {
     console.log("Lobby status updated to 'abandoned'. Redirecting");
     redirectToLobby();
   })
@@ -525,12 +554,16 @@ function leaveGame() {
   });
 }
 
+/**
+ * Allows users to press 'Enter' key to submit guesses rather than always having to
+ * press the submit button
+ */
 var input = document.getElementById("guessInput");
 if (input) {
-input.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    document.getElementById("submitGuessBtn").click();
-  }
-});
+  input.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("submitGuessBtn").click();
+    }
+  });
 }

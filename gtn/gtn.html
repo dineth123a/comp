@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Guess The Number</title>
+    <link href="/gtn/gtn.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Guess The Number</title>
-  <link href="/gtn/gtn.css" rel="stylesheet" type="text/css" />
-
-  <!-- firebase start ****************************************-->
-  <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-  <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
-  <!-- firebase end ******************************************-->
-  <script src="/fb/fb_setup.js"></script>
-  <script src="/fb/fb_io.js"></script>
-  <script defer src="/gtn/gtn.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
-<body>
+    <!-- firebase start ****************************************-->
+    <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+    <!-- firebase end ******************************************-->
+    <script src="/fb/fb_setup.js"></script>
+    <script src="/fb/fb_io.js"></script>
+    <script defer src="/gtn/gtn.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
     <h1>Guess The Number</h1>
 
     <div id="gameStatus"></div>
@@ -34,27 +33,25 @@
     </div>
 
     <div id="playerInfoContainer">
-    <div id="player1Info">
-      <h3>Player 1</h3>
-      <img id="player1Photo" src="" alt="Player 1 Photo">
-      <p id="player1Name"></p>
-      <p id="player1Wins"></p>
-      <p id="player1Losses"></p>
-      <p id="player1SecretNumberDisplay"></p>
+      <div id="player1Info">
+        <h3>Player 1</h3>
+        <img id="player1Photo" src="" alt="Player 1 Photo">
+        <p id="player1Name"></p>
+        <p id="player1Wins"></p>
+        <p id="player1Losses"></p>
+        <p id="player1SecretNumberDisplay"></p>
+      </div>
+      <div id="player2Info">
+        <h3>Player 2</h3>
+        <img id="player2Photo" src="" alt="Player 2 Photo">
+        <p id="player2Name"></p>
+        <p id="player2Wins"></p>
+        <p id="player2Losses"></p>
+        <p id="player2SecretNumberDisplay"></p>
+      </div>
     </div>
-    <div id="player2Info">
-      <h3>Player 2</h3>
-      <img id="player2Photo" src="" alt="Player 2 Photo">
-      <p id="player2Name"></p>
-      <p id="player2Wins"></p>
-      <p id="player2Losses"></p>
-      <p id="player2SecretNumberDisplay"></p>
+    <div class="gameActions">
+      <button onclick="leaveGame()">Return to Lobby</button>
     </div>
-  </div>
-  <div class="gameActions">
-<button onclick="leaveGame()">Return to Lobby</button>
-<button onclick="requestRematch()" id="rematchBtn" style="display: none";>Play Again</button>
-</div>
-</body>
+  </body>
 </html>
-

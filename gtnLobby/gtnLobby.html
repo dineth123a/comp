@@ -1,74 +1,70 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>GTN Lobby</title>
+    <link href="gtnLobby.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>GTN Lobby</title>
-  <link href="gtnLobby.css" rel="stylesheet" type="text/css" />
-
-  <!-- firebase start ****************************************-->
-  <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-  <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
-  <!-- firebase end ******************************************-->
-  <script src="../fb/fb_setup.js"></script>
-  <script src="../fb/fb_io.js"></script>
-  <script defer src="/gtnLobby/gtnLobby.js"></script>
+    <!-- firebase start ****************************************-->
+    <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+    <!-- firebase end ******************************************-->
+    <script src="../fb/fb_setup.js"></script>
+    <script src="../fb/fb_io.js"></script>
+    <script defer src="/gtnLobby/gtnLobby.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
+  </head>
 
-<body>
-  <div id="main">
-    <!--Navbar-->
-    <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="../html/gameMenu.html">Home</a>
-      <a href="../html/RocketRush.html">Rocket Rush</a>
-      <a href="../html/GeoDash.html">GeoDash</a>
-      <a href="../html/leaderboard.html">Leaderboard</a>
-      <a href="../ad_manager/ad_manager.html" id="adminLink" style="display:none;">Admin</a>
-      <a href="gtnLobby.html">GTN Lobby</a>
+  <body onload="initializeAuthAndNav()">
+    <div id="main">
+      <!--Navbar-->
+      <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="../html/gameMenu.html">Home</a>
+        <a href="../html/RocketRush.html">Rocket Rush</a>
+        <a href="../html/GeoDash.html">GeoDash</a>
+        <a href="../html/leaderboard.html">Leaderboard</a>
+        <a href="../ad_manager/ad_manager.html" id="adminLink" style="display:none;">Admin</a>
+        <a href="gtnLobby.html">GTN Lobby</a>
+      </div>
 
-  </div>
+      <!--Open and close navbar-->
+      <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
 
-    <!--Open and close navbar-->
+    <div class="lobby-container">
+      <div class="lobby-left">
+        <table>
+          <thead>
+            <tr>
+              <th>name</th>
+              <th>wins</th>
+              <th>losses</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id='tb_gtnLobby'></tbody>
+        </table>
+        <button onclick="createLobbyRecord()">CREATE</button>
+        <p id="statusMessage"></p>
+      </div>
 
-  <span style=" font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
-
-<div class="lobby-container">
-  <div class="lobby-left">
-    <table>
-      <thead>
-        <tr>
-          <th>name</th>
-          <th>wins</th>
-          <th>losses</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id='tb_gtnLobby'></tbody>
-    </table>
-    <button onclick="createLobbyRecord()">CREATE</button>
-    <p id="statusMessage"></p>
-  </div>
-
-  <div class="lobby-right">
-    <div class="gtn-description">
-      <h2>How to Play</h2>
-      <p>
-        In Guess The Number, each player takes turns guessing a number between 1 and 100.
-        The system will tell you if the guess is too high, too low, or correct.
-        The first player to guess the correct number wins the round!
-        Use strategy and logic to outsmart your opponent.
-      </p>
-    </div>
-    <img src="../Images/gtnScreenshot.png" alt="GTN Game Screenshot" class="gtn-image">
-  </div>
-</div>
-  
-</body>
+      <div class="lobby-right">
+        <div class="gtn-description">
+          <h2>How to Play</h2>
+          <p>
+            In Guess The Number, each player takes turns guessing a number between 1 and 100.
+            The system will tell you if the guess is too high, too low, or correct.
+            The first player to guess the correct number wins the round!
+            Use strategy and logic to outsmart your opponent.
+          </p>
+        </div>
+        <img src="../Images/gtnScreenshot.png" alt="GTN Game Screenshot" class="gtn-image">
+      </div>
+    </div> 
+  </body>
 </html>

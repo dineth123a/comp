@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Landing Page</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Landing Page</title>
-  <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <!-- firebase start ****************************************-->
+    <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+    <!-- firebase end ******************************************-->
+    <script src="fb/fb_setup.js"></script>
+    <script src="fb/fb_io.js"></script>
+  </head>
 
-  <!-- firebase start ****************************************-->
-  <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-  <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
-  <!-- firebase end ******************************************-->
-  <script src="fb/fb_setup.js"></script>
-  <script src="fb/fb_io.js"></script>
-</head>
-
-<body>
-  <div class="top-strip">
-    <span>Welcome User!</span>
-    <button onclick="fb_login()" class="login-button">Login/Sign up</button>
-  </div>
-
-  <div class="container">
-    <div class="game">
-      <h2>Rocket Rush</h2>
-      <img src="./Images/RocketRushScreenshot.png" alt="Rocket Rush" width="200" height="200">
-      <p>Rocket Rush: A fun and exciting game where you avoid missiles and collect coins
-        and try to get as high of a score as possible. The longer you stay in, the higher the score</p>
+  <body>
+    <div class="top-strip">
+      <span>Welcome User!</span>
+      <button onclick="fb_login()" class="login-button">Login/Sign up</button>
     </div>
 
-    <div class="game">
-      <h2>Geo Dash</h2>
-      <img src="./Images/GeoDashScreenshot.png" alt="Geo Dash">
-      <p>Geo Dash: A simple yet amazing game where you jump over the incoming obstacles
-        and see how high of a score you can get</p>
+    <div class="container">
+      <div class="game">
+        <h2>Rocket Rush</h2>
+        <img src="./Images/RocketRushScreenshot.png" alt="Rocket Rush" width="200" height="200">
+        <p>Rocket Rush: A fun and exciting game where you avoid missiles and collect coins
+          and try to get as high of a score as possible. The longer you stay in, the higher the score</p>
+      </div>
+
+      <div class="game">
+        <h2>Geo Dash</h2>
+        <img src="./Images/GeoDashScreenshot.png" alt="Geo Dash">
+        <p>Geo Dash: A simple yet amazing game where you jump over the incoming obstacles
+          and see how high of a score you can get</p>
+      </div>
+
+      <div class="game">
+        <h2>Guess The Number (GTN)</h2>
+        <img src="./Images/gtnScreenshot.png" alt="Guess The Number (GTN)">
+        <p>Guess The Number (GTN): A fun game where you try to guess the correct
+          within a set range. Use logic and feedback to narrow down your guesses and see how quickly you can find
+          the right answer
+        </p>
+      </div>
     </div>
 
-    <div class="game">
-      <h2>Guess The Number (GTN)</h2>
-      <img src="./Images/gtnScreenshot.png" alt="Guess The Number (GTN)">
-      <p>Guess The Number (GTN): A fun game where you try to guess the correct
-         within a set range. Use logic and feedback to narrow down your guesses and see how quickly you can find
-         the right answer
-      </p>
+    <div class="button-container">
+      <p>Click the button below to play!</p>
+      <button onclick="fb_login()" class="login-button" id="login-button2">Login/Sign up</button>
     </div>
-  </div>
 
-  <div class="button-container">
-    <p>Click the button below to play!</p>
-    <button onclick="fb_login()" class="login-button" id="login-button2">Login/Sign up</button>
-  </div>
-
-  <div class="bottom-strip"></div>
-</body>
+    <div class="bottom-strip"></div>
+    
+  </body>
 </html>

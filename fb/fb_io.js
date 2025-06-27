@@ -4,6 +4,7 @@ console.log('%c fb_io.js \n-----------', 'color: blue; background-color: white;'
  * Attempts to log in the user using Firebase Authentication.
  * If already logged in, fetches user registration details via fb_getRegistration
  * If not logged in, prompts Google sign-in.
+
  */
 function fb_login() {
   console.log("logging in to site")
@@ -71,6 +72,8 @@ const base = isGithub ? `/${repo}/` : "/";
     sessionStorage.setItem("suburb", userInfo.suburb || "");
     sessionStorage.setItem("city", userInfo.city || "");
 
+    initializeAuthAndNav();
+    
     console.log("session storage updated with user info:", userInfo);
     console.log("being redirected to game menu page.")
     window.location = base + "html/gameMenu.html";
@@ -119,8 +122,10 @@ function fb_register() {
 
 /**
  * Gets called by fb_register
- * Stores user information in database under the 'users' node.
- * Calls the function fb_goToGP
+ * Stores user information in database under the 'userDetails' node for the authenticated user
+ * Initialises highscores for RocketRush, GeoDash, and GTN games.
+ * Updates session storage with user details
+ * Calls the function fb_goToGP to redirect user to the game menu
  */
 function fb_userInfo(user) {
   console.log("fb_userInfo called with user:", user);
@@ -198,7 +203,8 @@ function fb_goToGP() {
 
 /**
  * Gets called in the endScreen() function in RocketRush.js
- * If user is signed in, save the highest Rocket Rush score for the authenticated user.
+ * If user is signed in, save the Rocket Rush score for the authenticated user.
+ * Only updates if new score is higher than the current score in database
  * If user is not signed in, redirect to index.html. Sign user in and then save high score.
  */
 function fb_saveScoreRocketRush(score) {
@@ -243,7 +249,8 @@ function fb_saveScoreRocketRush(score) {
 
 /**
  * Gets called by the youDead() function in GeoDash.js
- * If user is signed in, save the highest GeoDash score for the authenticated user.
+ * If user is signed in, save the GeoDash score for the authenticated user.
+ * Only updates if new score is higher than the current score in database
  * If user is not signed in, redirect to index.html. Sign user in and then save high score.
  */
 function fb_saveScoreGeoDash(score) {
@@ -286,6 +293,12 @@ function fb_saveScoreGeoDash(score) {
   });
 }
 
+/**
+ * Updates the total wins for the authenticated user in GTN game
+ * Retireves current win/loss record from database, then increments by specified amount,
+ * and then updates record in database
+ * If user is not signed in, they are redirected to the index page
+ */
 function fb_saveScoreGTN(winAmount) {
   var gameName = sessionStorage.getItem("gameName");
   firebase.auth().onAuthStateChanged((user) => {
@@ -310,6 +323,12 @@ function fb_saveScoreGTN(winAmount) {
   });
 }
 
+/**
+ * Updates the total losses for the authenticated user in GTN game
+ * Retireves current win/loss record from database, then increments by specified amount,
+ * and then updates record in database
+ * If user is not signed in, they are redirected to the index page
+ */
 function fb_saveLossGTN(lossAmount) {
     var gameName = sessionStorage.getItem("gameName");
     firebase.auth().onAuthStateChanged((user) => {
@@ -340,6 +359,7 @@ function fb_saveLossGTN(lossAmount) {
  * Gets called by the ad_user function in ad_manager.js
  * Fetches all user data (for admin purposes)
  * Calls fb_readUserDetailsOk function
+ * In case of error, it calls fb_error function
  */
 function fb_readUserDetailsAdmin() {
   firebase.database().ref('userDetails').on('value', fb_readUserDetailsOk, fb_error)
@@ -347,6 +367,7 @@ function fb_readUserDetailsAdmin() {
 
 /**
  * Gets called by the fb_readUserDetailsAdmin function
+ * Is called upon successful data retrieval of user details for admin purposes
  * Processes user data read by an admin via ad_processUSERReadAll
  */
   function fb_readUserDetailsOk(_snapshot) {
@@ -355,6 +376,7 @@ function fb_readUserDetailsAdmin() {
 
   /**
    * Gets called by ad_SI function in ad_manager.js
+   * mainly used for administrative purposes to monitor and retrieve all Rocket Rush highscores
    * Listens for changes to the 'users' reference in the database and calls fb_readRocketRushScoresOk on success, fb_error on failure
    */
   function fb_readUserRocketRushScoresAdmin() {
@@ -363,6 +385,7 @@ function fb_readUserDetailsAdmin() {
 
   /**
    * Gets called by fb_readUserRocketRushScoresAdmin
+   * Called upon successful retrieval of Rocket Rush scores for admin purposes
    * Processes the data returned in _snapshot by passing it to the ad_processBBReadAll for further handling
    */
     function fb_readRocketRushScoresOk(_snapshot) {
@@ -371,6 +394,7 @@ function fb_readUserDetailsAdmin() {
 
   /**
    * Gets called by ad_BB function in ad_manager.js
+   * mainly used for adminstrative purposes to monitor and retrieve all Geo Dash highscores
    * Listens for changes to the 'users' reference in the database and calls fb_readGeoDashScoresOk on success, fb_error on failure
    */
     function fb_readUserGeoDashScoresAdmin() {
@@ -379,6 +403,7 @@ function fb_readUserDetailsAdmin() {
     
   /**
    * Gets called by fb_readUserGeoDashScoresAdmin
+   * Called upon successful retrieval of Geo Dash scores for admin purposes
    * Processes the data returned in _snapshot by passing it to the ad_processSIReadAll for further handling
    */
       function fb_readGeoDashScoresOk(_snapshot) {
@@ -387,6 +412,7 @@ function fb_readUserDetailsAdmin() {
       
         /**
    * Gets called by ad_GTN function in ad_manager.js
+   * mainly used for administrative purposes to monitor and retrieve all GTN scores
    * Listens for changes to the 'highscores/gtn' reference in the database and calls fb_readGTNScoresOk on success, fb_error on failure
    */
     function fb_readUserGTNScoresAdmin() {
@@ -395,6 +421,7 @@ function fb_readUserDetailsAdmin() {
 
   /**
    * Gets called by fb_readUserGTNScoresAdmin
+   * Called upon successful retrieval of GTN scores for admin purposes
    * Processes the data returned in _snapshot by passing it to the ad_processGTNReadAll for further handling
    */
     function fb_readGTNScoresOk(_snapshot) {
@@ -402,6 +429,7 @@ function fb_readUserDetailsAdmin() {
     }
 /**
  * Gets called by the updateLeaderboard() function
+ * This function reads the top 5 Rocket Rush scores from the database
  * If signed in, fetches top 5 Rocket Rush scores from Firebase.
  * If not signed in, redirects to index.html ands signs in user via google authentication 
  */
@@ -421,6 +449,7 @@ function fb_readRocketRushScores(readScores) {
 
 /**
  * Gets called by the updateLeaderboard() function
+ * This function reads the top 5 Geo Dash scores from the database
  * If signed in, fetches top 5 GeoDash scores from Firebase.
  * If not signed in, redirects to index.html ands signs in user via google authentication 
  */
@@ -437,6 +466,13 @@ function fb_readGeoDashScores(readScores) {
   });
 }
 
+/**
+ * Gets called by updateLeaderboard() function
+ * Reads Guess The Number (GTN) scores from the database
+ * If user is signed in, it fetches the GTN scores,
+ * and then calls fb_displayGTNTable function to display the scores
+ * If user is not signed in, it redirects to landing page (index.html)
+ */
 function fb_readGTNScores(readScores) {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -452,7 +488,8 @@ function fb_readGTNScores(readScores) {
 
 /**
  * Gets called from leaderboard.html
- * Updates the leaderboard by fetching Rocket Rush and GeoDash scores when leaderboard page loads
+ * Updates the leaderboard by fetching the scores for all games,
+ * by calling their data retrieval function
  */
 function updateLeaderboard() {
   fb_readRocketRushScores();
@@ -461,6 +498,7 @@ function updateLeaderboard() {
 }
 
 /**
+ * Gets called by fb_readRocketRushScores() function
  * If the user has a Rocket Rush score in database, present it in the table
  * If user doesn't have Rocket Rush score in DB, set "No scores available" in table
  * Displays top 5 highscores for Rocket Rush
@@ -496,6 +534,7 @@ function fb_displayRocketRushTable(snapshot) {
 }
 
 /**
+ * Gets called by fb_readGeoDashScores() function
  * If the user has a GeoDash score in database, present it in the table
  * If user doesn't have a GeoDash score in database, present "No scores available" in the table
  * Displays top 5 highscores for GeoDash
@@ -530,6 +569,13 @@ function fb_displayGeoDashTable(snapshot) {
   }
 }
 
+
+/**
+ * Gets called by fb_readGTNScores() function
+ * If the user has a GTN score record in database, present it in the table
+ * If user doesn't have a GTN score record in database, present "No scores available" in the table
+ * Displays top 5 players for GTN based on wins
+ */
 function fb_displayGTNTable(snapshot) {
   var table = document.getElementById("container3");
   if (!table) {
@@ -579,10 +625,14 @@ function fb_displayGTNTable(snapshot) {
   }
 }
 
-
+/**
+ * Controls the visibility of admin link navigation bar based on user's authenctication status,
+ * registration in 'userDetails' , and whether they have adminAccess
+ * If user is registered and is an admin, they can see the admin page link in navbar
+ * If not, users can't see admin page link in navbar
+ */
 function initializeAuthAndNav() {
   // Get the admin link element by its ID
-  // It's important to ensure this ID exists in your HTML navigation
   const adminLink = document.getElementById('adminLink');
 
   firebase.auth().onAuthStateChanged(function (user) {
@@ -647,6 +697,7 @@ function initializeAuthAndNav() {
 
 /**
  * Opens the side navigation bar.
+ * and shifts main content area to the right
  */
 function openNav() {
   document.getElementById("mySidenav").style.width = "250px";
@@ -656,12 +707,10 @@ function openNav() {
 
 /**
  * Closes the side navigation bar.
+ * and returns the main content area to its original position
  */
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
   // The 'main' content area should return to its original position
   document.getElementById("main").style.marginLeft = "0";
 }
-
-// Call the initialization function when the DOM content is fully loaded
-document.addEventListener('DOMContentLoaded', initializeAuthAndNav);

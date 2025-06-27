@@ -1,83 +1,82 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Registration</title>
+    <link href="../css/registration.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Registration</title>
-  <link href="../css/registration.css" rel="stylesheet" type="text/css" />
+    <!-- firebase start ****************************************-->
+    <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+    <script src="https://www.addysolutions.com/address-lookup/1.6.3/js/addy.min.js?nzKey=c7f56058f287498d8e34d5a3dee5a2a5&country=nz&loadcss=true" async defer></script>
+    <!-- firebase end ******************************************-->
+    <script src="../fb/fb_setup.js"></script>
+    <script src="../fb/fb_io.js"></script>
+    <script src="../registration.js"></script>
+  </head>
 
-  <!-- firebase start ****************************************-->
-  <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-  <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
-  <script src="https://www.addysolutions.com/address-lookup/1.6.3/js/addy.min.js?nzKey=c7f56058f287498d8e34d5a3dee5a2a5&country=nz&loadcss=true" async defer></script>
-  <!-- firebase end ******************************************-->
-  <script src="../fb/fb_setup.js"></script>
-  <script src="../fb/fb_io.js"></script>
-  <script src="../registration.js"></script>
-</head>
+  <body>
+    <form id="registrationForm">
+      <label for="HTML_name" class="questions">Name:</label><br>
+      <input type="text" id="HTML_name" placeholder="e.g. Bob" name="name" required><br>
 
-<body>
-  <form id="registrationForm">
-    <label for="HTML_name" class="questions">Name:</label><br>
-    <input type="text" id="HTML_name" placeholder="e.g. Bob" name="name" required><br>
+      <label for="HTML_age" class="questions">Age:</label><br>
+      <input type="number" id="HTML_age" placeholder="e.g. 18" name="age" required><br>
 
-    <label for="HTML_age" class="questions">Age:</label><br>
-    <input type="number" id="HTML_age" placeholder="e.g. 18" name="age" required><br>
+      <label for="HTML_phoneNumber" class="questions">Phone number:</label><br>
+      <input type="number" id="HTML_phoneNumber" placeholder="e.g. 027 906 4218" name="phone number" required><br>
 
-    <label for="HTML_phoneNumber" class="questions">Phone number:</label><br>
-    <input type="number" id="HTML_phoneNumber" placeholder="e.g. 027 906 4218" name="phone number" required><br>
+      <label for="HTML_street" class="questions">Street:</label><br>
+      <input type="text" id="HTML_street" placeholder="e.g. 42 Jackson Street" class="addy-line1" required><br>
 
-    <label for="HTML_street" class="questions">Street:</label><br>
-    <input type="text" id="HTML_street" placeholder="e.g. 42 Jackson Street" class="addy-line1" required><br>
+      <label for="HTML_suburb" class="questions">Suburb:</label><br>
+      <input type="text" id="HTML_suburb" placeholder="e.g. Petone" class="addy-suburb" required><br>
 
-    <label for="HTML_suburb" class="questions">Suburb:</label><br>
-    <input type="text" id="HTML_suburb" placeholder="e.g. Petone" class="addy-suburb" required><br>
+      <label for="HTML_city" class="questions">City:</label><br>
+      <input type="text" id="HTML_city" placeholder="e.g. Lower Hutt" class="addy-city" required><br>
 
-    <label for="HTML_city" class="questions">City:</label><br>
-    <input type="text" id="HTML_city" placeholder="e.g. Lower Hutt" class="addy-city" required><br>
-
-    <label for="HTML_postcode" class="questions">Postcode:</label><br>
-    <input type="text" id="HTML_postcode" placeholder="e.g. 5010" class="addy-postcode" required><br>
-    
-    <div class="questions">
-    <label for="genderQuestion">Gender:</label><br>
-    <input type="radio" id="genderMale" name="gender" value="male" required>
-    <label for="genderMale">Male</label><br>
-    <input type="radio" id="genderFemale" name="gender" value="female">
-    <label for="genderFemale">Female</label><br>
-    <input type="radio" id="genderOther" name="gender" value="other">
-    <label for="genderOther">Other</label><br>
-    </div>
-    <input type="submit" value="submit"><br><br>
-  </form>
-<script>
-var addyKey = "c7f56058f287498d8e34d5a3dee5a2a5";
-function initAddy() {
-  var addyComplete = new AddyComplete(document.getElementById('HTML_street'));
-  addyComplete.options.excludePostBox = true;
-  addyComplete.fields = {
-    address: document.getElementById('HTML_street'),
-    suburb: document.getElementById('HTML_suburb'),
-    city: document.getElementById('HTML_city'),
-    postcode: document.getElementById('HTML_postcode'),
+      <label for="HTML_postcode" class="questions">Postcode:</label><br>
+      <input type="text" id="HTML_postcode" placeholder="e.g. 5010" class="addy-postcode" required><br>
+      
+      <div class="questions">
+      <label for="genderQuestion">Gender:</label><br>
+      <input type="radio" id="genderMale" name="gender" value="male" required>
+      <label for="genderMale">Male</label><br>
+      <input type="radio" id="genderFemale" name="gender" value="female">
+      <label for="genderFemale">Female</label><br>
+      <input type="radio" id="genderOther" name="gender" value="other">
+      <label for="genderOther">Other</label><br>
+      </div>
+      <input type="submit" value="submit"><br><br>
+    </form>
+  <script>
+  var addyKey = "c7f56058f287498d8e34d5a3dee5a2a5";
+  function initAddy() {
+    var addyComplete = new AddyComplete(document.getElementById('HTML_street'));
+    addyComplete.options.excludePostBox = true;
+    addyComplete.fields = {
+      address: document.getElementById('HTML_street'),
+      suburb: document.getElementById('HTML_suburb'),
+      city: document.getElementById('HTML_city'),
+      postcode: document.getElementById('HTML_postcode'),
+    }
   }
-}
 
-(function (d, w) {
-  // Add the address autocomplete JavaScript
-  var s = d.createElement('script');
-  var addyUrl = 'https://www.addysolutions.com/address-lookup/1.6.2/js/addy.min.js';
-  s.src = addyUrl + '?loadcss=true&enableLocation=false&country=au&auKey=' + addyKey;
-  s.type = 'text/javascript';
-  s.async = 1;
-  s.onload=initAddy;
-  d.body.appendChild(s);
-})(document, window);
-</script>
-</body>
+  (function (d, w) {
+    // Add the address autocomplete JavaScript
+    var s = d.createElement('script');
+    var addyUrl = 'https://www.addysolutions.com/address-lookup/1.6.2/js/addy.min.js';
+    s.src = addyUrl + '?loadcss=true&enableLocation=false&country=au&auKey=' + addyKey;
+    s.type = 'text/javascript';
+    s.async = 1;
+    s.onload=initAddy;
+    d.body.appendChild(s);
+  })(document, window);
+  </script>
+  </body>
 </html>
